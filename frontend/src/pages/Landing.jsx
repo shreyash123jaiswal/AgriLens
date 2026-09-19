@@ -120,7 +120,7 @@ export default function Landing() {
             color: 'var(--color-text-secondary)',
             lineHeight: 1.7,
           }}>
-            AgriLens AI combines satellite imagery, real-time weather, soil intelligence, and machine learning to give every farmer a complete, location-specific farm intelligence report.
+            AgriLens combines satellite imagery, real-time weather, soil intelligence, and machine learning to give every farmer a complete, location-specific farm intelligence report.
           </p>
 
           {/* CTA buttons */}
@@ -198,7 +198,7 @@ export default function Landing() {
             </div>
             <h2>Everything your farm needs in one platform</h2>
             <p style={{ maxWidth: '520px', margin: '12px auto 0', color: 'var(--color-text-muted)' }}>
-              From satellite to soil to AI, AgriLens AI brings together every data layer your farm requires.
+              From satellite to soil to AI, AgriLens brings together every data layer your farm requires.
             </p>
           </div>
 
@@ -313,8 +313,8 @@ export default function Landing() {
       }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '8px' }}>
           <Leaf size={16} color="var(--color-green)" />
-          <span style={{ fontFamily: 'var(--font-heading)', fontWeight: '700', fontSize: '1rem', color: 'white' }}>
-            AgriLens AI
+          <span style={{ fontFamily: 'var(--font-heading)', fontWeight: '800', fontSize: '1.1rem', color: 'white' }}>
+            AgriLens
           </span>
         </div>
         <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.78rem' }}>

@@ -37,12 +37,13 @@ export default function Navbar() {
           <div>
             <div style={{
               fontFamily: 'var(--font-heading)',
-              fontWeight: '700',
-              fontSize: '1.1rem',
+              fontWeight: '800',
+              fontSize: '1.2rem',
               color: 'var(--color-brown-800)',
               lineHeight: 1.1,
+              letterSpacing: '-0.3px',
             }}>
-              AgriLens <span style={{ color: 'var(--color-green-dark)' }}>AI</span>
+              Agri<span style={{ color: 'var(--color-green-dark)' }}>Lens</span>
             </div>
             <div style={{ fontSize: '0.65rem', color: 'var(--color-text-muted)', letterSpacing: '0.5px' }}>
               SMART FARM INTELLIGENCE

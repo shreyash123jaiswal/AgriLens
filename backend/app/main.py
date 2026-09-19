@@ -18,8 +18,8 @@ logger = logging.getLogger(__name__)
 from app.routes import farm, weather, satellite, soil, prediction, recommendations
 
 app = FastAPI(
-    title="AgriLens AI API",
-    description="AI-powered geospatial smart agriculture platform — Farm Intelligence API",
+    title="AgriLens API",
+    description="Geospatial smart agriculture platform — Farm Intelligence API",
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc",
@@ -48,7 +48,7 @@ app.include_router(recommendations.router, prefix="/api/recommendations", tags=[
 @app.get("/", tags=["Root"])
 async def root():
     return {
-        "message": "AgriLens AI Backend is running!",
+        "message": "AgriLens Backend is running!",
         "version": "1.0.0",
         "docs": "/docs",
         "health": "/api/health",
@@ -60,7 +60,7 @@ async def health_check():
     """Backend health check endpoint."""
     return {
         "status": "healthy",
-        "service": "AgriLens AI",
+        "service": "AgriLens",
         "version": "1.0.0",
         "message": "All systems operational",
         "endpoints": {

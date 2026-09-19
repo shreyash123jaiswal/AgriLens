@@ -1,6 +1,6 @@
-# 🌱 AgriLens AI — Smart Geospatial Agriculture Platform
+# 🌱 AgriLens — Smart Geospatial Agriculture Platform
 
-**AgriLens AI** is an end-to-end AI-powered precision agriculture and farm intelligence platform built for HackDevengers Hackathon. It integrates satellite vegetation analysis (NDVI), real-time weather forecasts, soil diagnostics, and trained machine learning models to deliver actionable farm insights, crop suitability recommendations, yield predictions, and multi-hazard risk assessment.
+**AgriLens** is an end-to-end precision agriculture and farm intelligence platform built for HackDevengers Hackathon. It integrates satellite vegetation analysis (NDVI), real-time weather forecasts, soil diagnostics, and trained machine learning models to deliver actionable farm insights, crop suitability recommendations, yield predictions, and multi-hazard risk assessment.
 
 ---
 
