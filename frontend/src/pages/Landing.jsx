@@ -145,19 +145,48 @@ export default function Landing() {
 
 
       {/* ===== FEATURES ===== */}
-      <section className="section" style={{ background: 'var(--color-cream)' }}>
-        <div className="container">
+      <section className="section features-section-brown" style={{
+        background: 'linear-gradient(175deg, #24150C 0%, #382416 50%, #20120A 100%)',
+        position: 'relative',
+        overflow: 'hidden',
+        padding: '90px 24px',
+      }}>
+        {/* Ambient lighting glows */}
+        <div style={{
+          position: 'absolute', top: '-100px', left: '10%',
+          width: '500px', height: '500px',
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(224, 123, 57, 0.12) 0%, transparent 70%)',
+          pointerEvents: 'none',
+        }} />
+        <div style={{
+          position: 'absolute', bottom: '-80px', right: '8%',
+          width: '450px', height: '450px',
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(64, 145, 108, 0.14) 0%, transparent 70%)',
+          pointerEvents: 'none',
+        }} />
+
+        <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <div style={{ textAlign: 'center', marginBottom: '56px' }}>
             <div style={{
-              display: 'inline-block', background: 'var(--color-brown-100)',
-              padding: '4px 16px', borderRadius: 'var(--radius-full)',
-              fontSize: '0.75rem', fontWeight: '700', letterSpacing: '0.8px',
-              color: 'var(--color-brown-600)', marginBottom: '16px',
+              display: 'inline-block',
+              background: 'rgba(223, 197, 160, 0.18)',
+              border: '1px solid rgba(223, 197, 160, 0.35)',
+              padding: '6px 20px',
+              borderRadius: 'var(--radius-full)',
+              fontSize: '0.75rem',
+              fontWeight: '800',
+              letterSpacing: '1px',
+              color: '#DFC5A0',
+              marginBottom: '16px',
             }}>
-              FEATURES
+              FEATURES & CAPABILITIES
             </div>
-            <h2>Everything your farm needs in one platform</h2>
-            <p style={{ maxWidth: '520px', margin: '12px auto 0', color: 'var(--color-text-muted)' }}>
+            <h2 style={{ color: '#FFFFFF', fontSize: 'clamp(1.8rem, 3.5vw, 2.5rem)', fontWeight: '800' }}>
+              Everything your farm needs in one platform
+            </h2>
+            <p style={{ maxWidth: '560px', margin: '14px auto 0', color: '#D4C3B3', fontSize: '1rem', lineHeight: 1.6 }}>
               From satellite to soil to AI, AgriLens brings together every data layer your farm requires.
             </p>
           </div>
@@ -165,13 +194,26 @@ export default function Landing() {
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
-            gap: '18px',
+            gap: '20px',
           }}>
             {FEATURES.map((f) => (
-              <div key={f.title} className="card" style={{ padding: '22px' }}>
-                <div style={{ fontSize: '2rem', marginBottom: '12px' }}>{f.icon}</div>
-                <h4 style={{ marginBottom: '8px', color: 'var(--color-brown-800)' }}>{f.title}</h4>
-                <p style={{ fontSize: '0.87rem', color: 'var(--color-text-muted)', lineHeight: 1.65 }}>{f.desc}</p>
+              <div key={f.title} className="feature-card-dark">
+                <div style={{
+                  width: '48px',
+                  height: '48px',
+                  borderRadius: '12px',
+                  background: 'rgba(255, 255, 255, 0.08)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '1.6rem',
+                  marginBottom: '16px',
+                  border: '1px solid rgba(255, 255, 255, 0.12)',
+                }}>
+                  {f.icon}
+                </div>
+                <h4 style={{ marginBottom: '8px', color: '#FFFFFF', fontSize: '1.1rem', fontWeight: '700' }}>{f.title}</h4>
+                <p style={{ fontSize: '0.88rem', color: '#C8B7A6', lineHeight: 1.65, margin: 0 }}>{f.desc}</p>
               </div>
             ))}
           </div>
@@ -179,7 +221,7 @@ export default function Landing() {
       </section>
 
       {/* ===== HOW IT WORKS ===== */}
-      <section id="how-it-works" className="section" style={{ background: 'var(--color-white)' }}>
+      <section id="how-it-works" className="section" style={{ background: 'var(--color-cream)', borderTop: '1px solid rgba(61,43,31,0.08)' }}>
         <div className="container">
           <div style={{ textAlign: 'center', marginBottom: '56px' }}>
             <div style={{
@@ -195,38 +237,37 @@ export default function Landing() {
 
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-            gap: '0',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))',
+            gap: '16px',
             position: 'relative',
           }}>
             {HOW_IT_WORKS.map((step, i) => (
-              <div key={step.step} style={{ textAlign: 'center', padding: '0 24px 40px', position: 'relative' }}>
-                {/* Connector line */}
-                {i < HOW_IT_WORKS.length - 1 && (
-                  <div style={{
-                    position: 'absolute', top: '36px', right: '-12px', zIndex: 1,
-                    width: '24px', height: '2px',
-                    background: 'var(--color-cream-border)',
-                    display: window.innerWidth > 768 ? 'block' : 'none',
-                  }} />
-                )}
+              <div key={step.step} style={{
+                textAlign: 'center',
+                padding: '32px 20px',
+                position: 'relative',
+                background: 'var(--color-white)',
+                borderRadius: 'var(--radius-lg)',
+                border: '1px solid var(--color-cream-border)',
+                boxShadow: 'var(--shadow-sm)',
+              }}>
                 {/* Step circle */}
                 <div style={{
-                  width: '72px', height: '72px',
+                  width: '68px', height: '68px',
                   borderRadius: '50%',
                   background: i === 0 ? 'var(--color-green-dark)' : 'var(--color-cream-dark)',
                   border: `2px solid ${i === 0 ? 'var(--color-green-dark)' : 'var(--color-cream-border)'}`,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   margin: '0 auto 16px',
-                  color: i === 0 ? 'white' : 'var(--color-brown-500)',
+                  color: i === 0 ? 'white' : 'var(--color-brown-700)',
                 }}>
                   {step.icon}
                 </div>
-                <div style={{ fontSize: '0.7rem', fontWeight: '800', color: 'var(--color-brown-300)', letterSpacing: '1px', marginBottom: '6px' }}>
+                <div style={{ fontSize: '0.72rem', fontWeight: '800', color: 'var(--color-brown-500)', letterSpacing: '1px', marginBottom: '8px' }}>
                   STEP {step.step}
                 </div>
-                <h4 style={{ marginBottom: '8px', color: 'var(--color-brown-800)' }}>{step.title}</h4>
-                <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', lineHeight: 1.65 }}>{step.desc}</p>
+                <h4 style={{ marginBottom: '8px', color: 'var(--color-brown-800)', fontSize: '1.08rem' }}>{step.title}</h4>
+                <p style={{ fontSize: '0.86rem', color: 'var(--color-text-muted)', lineHeight: 1.65, margin: 0 }}>{step.desc}</p>
               </div>
             ))}
           </div>
@@ -236,6 +277,20 @@ export default function Landing() {
       {/* Section Ends */}
 
       <style>{`
+        .feature-card-dark {
+          background: rgba(255, 255, 255, 0.05);
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          border-radius: var(--radius-lg);
+          padding: 24px;
+          transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+          backdrop-filter: blur(8px);
+        }
+        .feature-card-dark:hover {
+          background: rgba(255, 255, 255, 0.09);
+          border-color: rgba(224, 123, 57, 0.6);
+          transform: translateY(-4px);
+          box-shadow: 0 16px 32px rgba(0, 0, 0, 0.35);
+        }
         @keyframes pulse-dot {
           0%, 100% { opacity: 1; transform: scale(1); }
           50% { opacity: 0.5; transform: scale(1.3); }
