@@ -273,54 +273,7 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ===== CTA BANNER ===== */}
-      <section style={{
-        background: 'linear-gradient(135deg, var(--color-green-dark) 0%, var(--color-brown-700) 100%)',
-        padding: '72px 24px',
-        textAlign: 'center',
-      }}>
-        <div className="container">
-          <div style={{ fontSize: '3rem', marginBottom: '16px' }}>🌾</div>
-          <h2 style={{ color: 'white', marginBottom: '16px' }}>
-            Ready to see your farm through AI eyes?
-          </h2>
-          <p style={{ color: 'rgba(255,255,255,0.75)', marginBottom: '36px', maxWidth: '480px', margin: '0 auto 36px' }}>
-            Select your farm on the map and get a complete intelligence report in under 30 seconds.
-          </p>
-          <button
-            id="cta-analyze-bottom"
-            className="btn"
-            style={{
-              background: 'white',
-              color: 'var(--color-brown-700)',
-              fontSize: '1.05rem',
-              padding: '14px 36px',
-              fontWeight: '700',
-              borderRadius: 'var(--radius-full)',
-            }}
-            onClick={() => navigate('/select')}
-          >
-            <MapPin size={18} /> Start Farm Analysis <ArrowRight size={16} />
-          </button>
-        </div>
-      </section>
-
-      {/* ===== FOOTER ===== */}
-      <footer style={{
-        background: 'var(--color-brown-900)',
-        padding: '28px 24px',
-        textAlign: 'center',
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '8px' }}>
-          <Leaf size={16} color="var(--color-green)" />
-          <span style={{ fontFamily: 'var(--font-heading)', fontWeight: '800', fontSize: '1.1rem', color: 'white' }}>
-            AgriLens
-          </span>
-        </div>
-        <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.78rem' }}>
-          Built with ❤️ by HackDevengers · Hackathon 2026 · Demo data is clearly labelled
-        </p>
-      </footer>
+      {/* Section Ends */}
 
       <style>{`
         @keyframes pulse-dot {
