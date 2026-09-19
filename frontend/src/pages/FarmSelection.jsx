@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { MapContainer, TileLayer, useMap, useMapEvents, Polygon, Marker, Popup } from 'react-leaflet'
+import { MapContainer, TileLayer, useMap, useMapEvents, Polygon, Marker, Popup, GeoJSON } from 'react-leaflet'
 import {
   Search, MapPin, Leaf, ArrowRight, Info, Trash2, MousePointer,
-  Compass, Navigation, Crosshair, AlertCircle, CheckCircle2
+  Compass, Navigation, Crosshair, AlertCircle, CheckCircle2, Layers
 } from 'lucide-react'
 import Navbar from '../components/Navbar'
 import LoadingScreen from '../components/LoadingScreen'
@@ -21,11 +21,13 @@ L.Icon.Default.mergeOptions({
 })
 
 const POPULAR_LOCATIONS = [
-  { name: 'Punjab, India',       lat: 30.9,  lng: 75.8 },
-  { name: 'Maharashtra, India',  lat: 19.7,  lng: 75.3 },
-  { name: 'Tamil Nadu, India',   lat: 11.1,  lng: 78.7 },
-  { name: 'Karnataka, India',    lat: 15.3,  lng: 75.7 },
-  { name: 'Andhra Pradesh, India', lat: 15.9, lng: 79.7 },
+  { name: 'Punjab, India',         lat: 30.9,  lng: 75.8 },
+  { name: 'Maharashtra, India',    lat: 19.7,  lng: 75.3 },
+  { name: 'Tamil Nadu, India',     lat: 11.1,  lng: 78.7 },
+  { name: 'Karnataka, India',      lat: 15.3,  lng: 75.7 },
+  { name: 'Andhra Pradesh, India', lat: 15.9,  lng: 79.7 },
+  { name: 'West Bengal, India',    lat: 22.5,  lng: 88.3 },
+  { name: 'Rajasthan, India',      lat: 26.3,  lng: 73.0 },
 ]
 
 const CROPS = ['Rice', 'Wheat', 'Maize', 'Cotton', 'Sugarcane', 'Soybean', 'Pulses', 'Tomato']
@@ -107,10 +109,17 @@ export default function FarmSelection() {
 
   const [mapPosition, setMapPosition] = useState(null)
   const [locationMode, setLocationMode] = useState('coords') // 'coords' | 'search'
-  const [inputLat, setInputLat] = useState('30.9009')
-  const [inputLng, setInputLng] = useState('75.8572')
+  const [inputLat, setInputLat] = useState('19.7515')
+  const [inputLng, setInputLng] = useState('75.7139')
   const [coordsError, setCoordsError] = useState(null)
   const [coordsSuccess, setCoordsSuccess] = useState(false)
+
+  // Map visualization state
+  const [mapStyle, setMapStyle] = useState('satellite') // 'satellite' | 'streets'
+  const [showBorders, setShowBorders] = useState(true)
+  const [statesGeoJson, setStatesGeoJson] = useState(null)
+  const [nationalBorderGeoJson, setNationalBorderGeoJson] = useState(null)
+  const stateGeoJsonRef = useRef(null)
 
   const [searchQuery, setSearchQuery] = useState('')
   const [searchResults, setSearchResults] = useState([])
@@ -121,6 +130,23 @@ export default function FarmSelection() {
   const [farmArea, setFarmArea] = useState(null)
   const [farmName, setFarmName] = useState('My Farm')
   const [selectedCrop, setSelectedCrop] = useState('Rice')
+
+  // Load India boundaries GeoJSON
+  useEffect(() => {
+    fetch('/data/india_states.geojson')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data) setStatesGeoJson(data)
+      })
+      .catch((err) => console.warn('Could not load states geojson:', err))
+
+    fetch('/data/india_border.geojson')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data) setNationalBorderGeoJson(data)
+      })
+      .catch((err) => console.warn('Could not load national border geojson:', err))
+  }, [])
 
   const handleSearch = async (e) => {
     e.preventDefault()
@@ -218,8 +244,6 @@ export default function FarmSelection() {
     }
 
     // Generate ~2 hectare square centered at (lat, lng)
-    // 2 hectares = 20,000 m² ≈ 141.4m x 141.4m
-    // Half width ≈ 71 meters
     const dLat = 71.0 / 111320.0
     const dLng = 71.0 / (111320.0 * Math.cos((lat * Math.PI) / 180.0))
 
@@ -285,7 +309,7 @@ export default function FarmSelection() {
           finishedPolygon.reduce((s, p) => s + p[0], 0) / finishedPolygon.length,
           finishedPolygon.reduce((s, p) => s + p[1], 0) / finishedPolygon.length,
         ]
-      : mapPosition || [parseFloat(inputLat) || 20.5937, parseFloat(inputLng) || 78.9629]
+      : mapPosition || [parseFloat(inputLat) || 19.7515, parseFloat(inputLng) || 75.7139]
 
     const payload = {
       polygon: finishedPolygon || [],
@@ -316,28 +340,93 @@ export default function FarmSelection() {
     }
   }
 
+  // --- Styling for State & National Borders ---
+  const stateStyle = useCallback(() => ({
+    color: mapStyle === 'satellite' ? '#52B788' : '#2D6A4F',
+    weight: 1.6,
+    opacity: 0.85,
+    fillColor: '#40916C',
+    fillOpacity: mapStyle === 'satellite' ? 0.05 : 0.03,
+    dashArray: '4, 4',
+  }), [mapStyle])
+
+  const nationalBorderStyle = useCallback(() => ({
+    color: '#E76F51', // Warm saffron / terracotta glowing national border
+    weight: 3.5,
+    opacity: 0.95,
+    fillColor: '#2D6A4F',
+    fillOpacity: 0.0,
+    dashArray: null,
+  }), [])
+
+  const onEachStateFeature = useCallback((feature, layer) => {
+    const stateName = feature.properties?.name || 'State'
+    layer.bindTooltip(
+      `<div style="font-weight: 800; font-size: 0.82rem; color: #1B4332; display: flex; align-items: center; gap: 6px;">
+         <span>🏛️</span>
+         <span>${stateName}</span>
+       </div>
+       <div style="font-size: 0.68rem; color: #666; margin-top: 2px;">Click to center region</div>`,
+      {
+        sticky: true,
+        direction: 'top',
+        className: 'custom-state-tooltip',
+      }
+    )
+
+    layer.on({
+      mouseover: (e) => {
+        const l = e.target
+        l.setStyle({
+          weight: 3.0,
+          color: '#E76F51',
+          fillColor: '#52B788',
+          fillOpacity: 0.22,
+          dashArray: null,
+        })
+        if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+          l.bringToFront()
+        }
+      },
+      mouseout: (e) => {
+        if (stateGeoJsonRef.current) {
+          stateGeoJsonRef.current.resetStyle(e.target)
+        }
+      },
+      click: (e) => {
+        if (isDrawing) return
+        const bounds = e.target.getBounds()
+        const center = bounds.getCenter()
+        setMapPosition([center.lat, center.lng])
+        setInputLat(center.lat.toFixed(5))
+        setInputLng(center.lng.toFixed(5))
+        setSearchQuery(stateName)
+      },
+    })
+  }, [isDrawing])
+
   if (loading) return <LoadingScreen message={`Analyzing ${farmName}…`} />
 
   return (
     <div style={{ background: 'var(--color-cream)', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <Navbar />
 
-      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '32px 24px', flex: 1, width: '100%' }}>
+      <div style={{ maxWidth: '1240px', margin: '0 auto', padding: '32px 24px', flex: 1, width: '100%' }}>
         {/* Header */}
-        <div style={{ marginBottom: '28px' }}>
+        <div style={{ marginBottom: '24px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
             <MapPin size={18} color="var(--color-orange)" />
             <span style={{ fontSize: '0.78rem', fontWeight: '700', color: 'var(--color-orange)', letterSpacing: '0.5px', textTransform: 'uppercase' }}>
               Step 1 of 2 — Farm Selection
             </span>
           </div>
-          <h2 style={{ marginBottom: '8px' }}>Select Your Farm</h2>
-          <p style={{ color: 'var(--color-text-muted)', maxWidth: '640px', fontSize: '0.92rem' }}>
-            Enter your farm coordinates directly or search by location. You can draw your farm boundary on the map, auto-generate a boundary, or analyze at your coordinates directly.
+          <h2 style={{ marginBottom: '6px' }}>Select Your Farm</h2>
+          <p style={{ color: 'var(--color-text-muted)', maxWidth: '680px', fontSize: '0.92rem', margin: 0 }}>
+            Enter your coordinates directly, click any Indian state to focus, or search by location. You can draw your farm boundary, auto-generate a 2 ha field, or analyze at your coordinates.
           </p>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '340px 1fr', gap: '24px', alignItems: 'start' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '350px 1fr', gap: '24px', alignItems: 'start' }}>
           {/* ===== SIDEBAR ===== */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
 
@@ -353,7 +442,7 @@ export default function FarmSelection() {
                   type="text"
                   value={farmName}
                   onChange={(e) => setFarmName(e.target.value)}
-                  placeholder="e.g. North Field"
+                  placeholder="e.g. Maharashtra Field"
                   style={{
                     width: '100%', padding: '9px 12px',
                     border: '1.5px solid var(--color-cream-border)',
@@ -446,7 +535,7 @@ export default function FarmSelection() {
                         step="any"
                         value={inputLat}
                         onChange={(e) => { setInputLat(e.target.value); setCoordsError(null); }}
-                        placeholder="e.g. 30.9009"
+                        placeholder="e.g. 19.7515"
                         style={{
                           width: '100%', padding: '8px 10px',
                           border: coordsError ? '1.5px solid #E63946' : '1.5px solid var(--color-cream-border)',
@@ -466,7 +555,7 @@ export default function FarmSelection() {
                         step="any"
                         value={inputLng}
                         onChange={(e) => { setInputLng(e.target.value); setCoordsError(null); }}
-                        placeholder="e.g. 75.8572"
+                        placeholder="e.g. 75.7139"
                         style={{
                           width: '100%', padding: '8px 10px',
                           border: coordsError ? '1.5px solid #E63946' : '1.5px solid var(--color-cream-border)',
@@ -486,7 +575,7 @@ export default function FarmSelection() {
 
                   {coordsSuccess && (
                     <div style={{ fontSize: '0.75rem', color: '#2D6A4F', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                      <CheckCircle2 size={13} style={{ flexShrink: 0 }} /> Location updated successfully!
+                      <CheckCircle2 size={13} style={{ flexShrink: 0 }} /> Location updated!
                     </div>
                   )}
 
@@ -532,7 +621,7 @@ export default function FarmSelection() {
                   </button>
 
                   <div style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', lineHeight: 1.4 }}>
-                    💡 <em>Click anywhere on the map to automatically pick coordinates.</em>
+                    💡 <em>Click any state on the map to zoom, or click anywhere to pick exact coordinates.</em>
                   </div>
                 </div>
               )}
@@ -546,7 +635,7 @@ export default function FarmSelection() {
                       type="text"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="Search village, district…"
+                      placeholder="Search village, district, state…"
                       style={{
                         flex: 1, padding: '8px 12px',
                         border: '1.5px solid var(--color-cream-border)',
@@ -696,14 +785,47 @@ export default function FarmSelection() {
               position: 'relative',
               borderRadius: 'var(--radius-lg)', overflow: 'hidden',
               border: '1px solid var(--color-cream-border)', boxShadow: 'var(--shadow-md)',
-              height: '580px', cursor: isDrawing ? 'crosshair' : 'grab',
+              height: '620px', cursor: isDrawing ? 'crosshair' : 'grab',
             }}>
-              <MapContainer center={[30.9009, 75.8572]} zoom={6} style={{ height: '100%', width: '100%' }}>
-                <TileLayer
-                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                />
+              <MapContainer center={[22.5937, 78.9629]} zoom={5} style={{ height: '100%', width: '100%' }}>
+                {/* Tile Layer: Satellite vs Streets */}
+                {mapStyle === 'satellite' ? (
+                  <TileLayer
+                    attribution='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+                    url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+                    maxZoom={18}
+                  />
+                ) : (
+                  <TileLayer
+                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    maxZoom={19}
+                  />
+                )}
+
+                {/* India State Boundaries GeoJSON Layer */}
+                {showBorders && statesGeoJson && (
+                  <GeoJSON
+                    key={`states-${mapStyle}`}
+                    ref={stateGeoJsonRef}
+                    data={statesGeoJson}
+                    style={stateStyle}
+                    onEachFeature={onEachStateFeature}
+                  />
+                )}
+
+                {/* India National Border GeoJSON Layer */}
+                {showBorders && nationalBorderGeoJson && (
+                  <GeoJSON
+                    key={`national-border-${mapStyle}`}
+                    data={nationalBorderGeoJson}
+                    style={nationalBorderStyle}
+                    interactive={false}
+                  />
+                )}
+
                 {mapPosition && <FlyTo position={mapPosition} />}
+
                 <MapInteractionLayer
                   isDrawing={isDrawing}
                   onPointAdded={handlePointAdded}
@@ -711,39 +833,106 @@ export default function FarmSelection() {
                   onMapClick={handleMapClick}
                   locationMode={locationMode}
                 />
+
                 {/* Marker at current center */}
                 {mapPosition && (
                   <Marker position={mapPosition}>
                     <Popup>
                       <div style={{ padding: '4px', textAlign: 'center' }}>
                         <strong style={{ display: 'block', color: 'var(--color-green-dark)', marginBottom: '2px' }}>
-                          Farm Center
+                          Selected Farm Center
                         </strong>
                         <span style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>
-                          {mapPosition[0].toFixed(5)}°, {mapPosition[1].toFixed(5)}°
+                          {mapPosition[0].toFixed(5)}°N, {mapPosition[1].toFixed(5)}°E
                         </span>
                       </div>
                     </Popup>
                   </Marker>
                 )}
+
                 {drawnPoints.length > 0 && !finishedPolygon && (
                   <DrawingMarkers points={drawnPoints} />
                 )}
+
                 {/* Live polygon preview while drawing */}
                 {drawnPoints.length >= 2 && !finishedPolygon && (
                   <Polygon
                     positions={drawnPoints}
-                    pathOptions={{ color: '#2D6A4F', fillColor: '#40916C', fillOpacity: 0.15, weight: 2, dashArray: '6 4' }}
+                    pathOptions={{ color: '#E76F51', fillColor: '#F4A261', fillOpacity: 0.25, weight: 2.5, dashArray: '6 4' }}
                   />
                 )}
+
                 {/* Finished polygon */}
                 {finishedPolygon && (
                   <Polygon
                     positions={finishedPolygon}
-                    pathOptions={{ color: '#2D6A4F', fillColor: '#40916C', fillOpacity: 0.2, weight: 2.5 }}
+                    pathOptions={{ color: '#2D6A4F', fillColor: '#40916C', fillOpacity: 0.35, weight: 3 }}
                   />
                 )}
               </MapContainer>
+
+              {/* Floating Map Controls Panel */}
+              <div className="map-overlay-panel">
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+                  <span style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--color-brown-700)', textTransform: 'uppercase', letterSpacing: '0.4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <Layers size={12} color="var(--color-green-dark)" /> Map Style
+                  </span>
+                  <div style={{ display: 'flex', background: 'var(--color-cream-dark)', borderRadius: '6px', padding: '2px' }}>
+                    <button
+                      type="button"
+                      id="map-style-satellite"
+                      onClick={() => setMapStyle('satellite')}
+                      style={{
+                        padding: '3px 7px', fontSize: '0.68rem', fontWeight: 600, border: 'none', borderRadius: '4px',
+                        cursor: 'pointer',
+                        background: mapStyle === 'satellite' ? 'var(--color-white)' : 'transparent',
+                        color: mapStyle === 'satellite' ? 'var(--color-green-dark)' : 'var(--color-text-muted)',
+                        boxShadow: mapStyle === 'satellite' ? '0 1px 2px rgba(0,0,0,0.1)' : 'none',
+                      }}
+                    >
+                      🛰️ Satellite
+                    </button>
+                    <button
+                      type="button"
+                      id="map-style-streets"
+                      onClick={() => setMapStyle('streets')}
+                      style={{
+                        padding: '3px 7px', fontSize: '0.68rem', fontWeight: 600, border: 'none', borderRadius: '4px',
+                        cursor: 'pointer',
+                        background: mapStyle === 'streets' ? 'var(--color-white)' : 'transparent',
+                        color: mapStyle === 'streets' ? 'var(--color-green-dark)' : 'var(--color-text-muted)',
+                        boxShadow: mapStyle === 'streets' ? '0 1px 2px rgba(0,0,0,0.1)' : 'none',
+                      }}
+                    >
+                      🗺️ Streets
+                    </button>
+                  </div>
+                </div>
+
+                <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.74rem', fontWeight: 600, color: 'var(--color-text-secondary)', cursor: 'pointer', margin: 0 }}>
+                  <input
+                    type="checkbox"
+                    id="toggle-borders-checkbox"
+                    checked={showBorders}
+                    onChange={(e) => setShowBorders(e.target.checked)}
+                    style={{ accentColor: 'var(--color-green-dark)', cursor: 'pointer' }}
+                  />
+                  <span>🇮🇳 State & National Borders</span>
+                </label>
+
+                {showBorders && (
+                  <div style={{ borderTop: '1px solid var(--color-cream-border)', paddingTop: '6px', fontSize: '0.68rem', color: 'var(--color-text-muted)', display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span style={{ display: 'inline-block', width: '14px', height: '3.5px', background: '#E76F51', borderRadius: '2px' }} />
+                      <strong style={{ color: '#E76F51' }}>National Border</strong>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span style={{ display: 'inline-block', width: '14px', height: '0', borderTop: '2px dashed #52B788' }} />
+                      <span>State Borders (Hover/Click)</span>
+                    </div>
+                  </div>
+                )}
+              </div>
 
               {/* Coordinate readout badge overlay */}
               {mapPosition && (
@@ -756,7 +945,7 @@ export default function FarmSelection() {
                   display: 'flex', alignItems: 'center', gap: '6px'
                 }}>
                   <MapPin size={13} color="var(--color-orange)" />
-                  Lat: {mapPosition[0].toFixed(4)}° | Lng: {mapPosition[1].toFixed(4)}°
+                  Lat: {mapPosition[0].toFixed(4)}°N | Lng: {mapPosition[1].toFixed(4)}°E
                 </div>
               )}
             </div>
