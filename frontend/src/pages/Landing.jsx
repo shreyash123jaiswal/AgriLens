@@ -91,21 +91,6 @@ export default function Landing() {
 
         <div className="container" style={{ textAlign: 'center', position: 'relative' }}>
           {/* Eyebrow badge */}
-          <div className="animate-fade-in-up" style={{
-            display: 'inline-flex', alignItems: 'center', gap: '8px',
-            background: 'var(--color-green-light)',
-            border: '1px solid rgba(64,145,108,0.3)',
-            padding: '6px 18px',
-            borderRadius: 'var(--radius-full)',
-            marginBottom: '28px',
-            fontSize: '0.8rem',
-            fontWeight: '700',
-            color: 'var(--color-green-dark)',
-            letterSpacing: '0.5px',
-          }}>
-            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--color-green)', display: 'inline-block', animation: 'pulse-dot 1.5s infinite' }} />
-            AI-Powered Smart Agriculture
-          </div>
 
           {/* Headline */}
           <h1 className="animate-fade-in-up delay-100" style={{ maxWidth: '780px', margin: '0 auto 20px' }}>
@@ -158,31 +143,6 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ===== PROBLEM STATEMENT ===== */}
-      <section style={{
-        background: 'var(--color-brown-800)',
-        padding: '72px 24px',
-        color: 'white',
-      }}>
-        <div className="container" style={{ textAlign: 'center' }}>
-          <div style={{
-            display: 'inline-block',
-            background: 'rgba(255,255,255,0.1)',
-            border: '1px solid rgba(255,255,255,0.15)',
-            padding: '4px 16px',
-            borderRadius: 'var(--radius-full)',
-            fontSize: '0.75rem', fontWeight: '700', letterSpacing: '0.8px', marginBottom: '20px', color: 'rgba(255,255,255,0.7)',
-          }}>
-            THE PROBLEM
-          </div>
-          <h2 style={{ color: 'white', maxWidth: '700px', margin: '0 auto 20px' }}>
-            Farmers make critical decisions with generic, one-size-fits-all data
-          </h2>
-          <p style={{ color: 'rgba(255,255,255,0.65)', maxWidth: '580px', margin: '0 auto', lineHeight: 1.8 }}>
-            District-level weather reports. Season-average soil data. No field-specific yield estimates. Farmers are left guessing on irrigation, crop choice, and fertilizer — costing yield, water, and money.
-          </p>
-        </div>
-      </section>
 
       {/* ===== FEATURES ===== */}
       <section className="section" style={{ background: 'var(--color-cream)' }}>
