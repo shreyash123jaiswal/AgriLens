@@ -32,57 +32,60 @@ def _generate_soil_profile(lat: float, lon: float, area_ha: float) -> dict:
     seed = int(abs(lat * 1000 + lon * 100)) % 10000
     rng = random.Random(seed)
 
-    # Climate-zone heuristics
-    is_tropical = abs(lat) <= 23.5
-    is_arid = (15 <= lat <= 35 and 40 <= lon <= 70)  # Middle East / NW India arid
-    is_alluvial = (20 <= lat <= 32 and 70 <= lon <= 88)  # Indo-Gangetic plain
+    # Climate-zone and soil region heuristics
+    is_black_cotton = (15 <= lat <= 22.8 and 73 <= lon <= 81.5)
+    is_arid = (24 <= lat <= 32 and 69 <= lon <= 75.5)
+    is_alluvial = (23 <= lat <= 33 and 74 <= lon <= 89)
+    is_tropical_south = (8 <= lat <= 18 and 74 <= lon <= 80.5) or (lat < 15)
 
-    # pH
-    if is_alluvial:
-        ph = round(rng.uniform(6.2, 7.2), 1)
+    # pH and NPK calibration
+    if is_black_cotton:
+        ph = round(rng.uniform(7.2, 8.2), 1)
+        n_num = rng.uniform(75, 115)
+        p_num = rng.uniform(35, 52)
+        k_num = rng.uniform(18, 30)  # Optimal for Cotton, Soybean, Pulses
+        soil_type = "Black Cotton Clay"
+        moisture = rng.randint(45, 65)
     elif is_arid:
-        ph = round(rng.uniform(7.2, 8.5), 1)
-    elif is_tropical:
-        ph = round(rng.uniform(5.5, 6.8), 1)
+        ph = round(rng.uniform(7.5, 8.4), 1)
+        n_num = rng.uniform(22, 45)
+        p_num = rng.uniform(45, 75)
+        k_num = rng.uniform(18, 32)  # Optimal for Chickpea, Mothbeans, Pulses
+        soil_type = "Arid Sandy Loam"
+        moisture = rng.randint(20, 42)
+    elif is_alluvial:
+        ph = round(rng.uniform(6.5, 7.5), 1)
+        n_num = rng.uniform(75, 110)
+        p_num = rng.uniform(42, 65)
+        k_num = rng.uniform(22, 42)  # Optimal for Rice, Wheat, Maize, Sugarcane, Jute
+        soil_type = rng.choice(["Alluvial Loam", "Gangetic Silt Loam", "Clay Loam"])
+        moisture = rng.randint(50, 72)
+    elif is_tropical_south:
+        ph = round(rng.uniform(5.5, 6.7), 1)
+        n_num = rng.uniform(25, 55)
+        p_num = rng.uniform(18, 42)
+        k_num = rng.uniform(26, 46)  # Optimal for Coconut, Banana, Spices, Mango
+        soil_type = rng.choice(["Red Laterite", "Coastal Loam", "Red Sandy Loam"])
+        moisture = rng.randint(55, 78)
     else:
-        ph = round(rng.uniform(5.8, 7.0), 1)
-
-    # Nitrogen
-    if is_alluvial:
-        nitrogen = rng.choice(["Medium", "Medium", "High"])
-    elif is_arid:
-        nitrogen = rng.choice(["Low", "Low", "Medium"])
-    else:
-        nitrogen = rng.choice(["Low", "Medium", "Medium", "High"])
-
-    # Phosphorus
-    phosphorus = rng.choice(["Low", "Medium", "Medium", "High", "High"])
-
-    # Potassium
-    potassium = rng.choice(["Medium", "Medium", "High", "High"])
-
-    # Moisture (%)
-    if is_arid:
-        moisture = rng.randint(25, 45)
-    elif is_tropical:
-        moisture = rng.randint(50, 75)
-    else:
+        ph = round(rng.uniform(6.2, 7.3), 1)
+        n_num = rng.uniform(50, 85)
+        p_num = rng.uniform(35, 58)
+        k_num = rng.uniform(20, 38)
+        soil_type = rng.choice(["Loam", "Sandy Loam", "Clay Loam"])
         moisture = rng.randint(40, 65)
 
+    def _get_label(val):
+        if val < 40: return "Low"
+        if val < 75: return "Medium"
+        return "High"
+
+    nitrogen = _get_label(n_num)
+    phosphorus = _get_label(p_num)
+    potassium = _get_label(k_num)
+
     # Organic carbon (%)
-    oc = round(rng.uniform(0.5, 2.5), 1)
-
-    # Soil type
-    soil_types_alluvial = ["Clay Loam", "Silt Loam", "Loamy Sand"]
-    soil_types_tropical = ["Red Laterite", "Black Cotton", "Sandy Loam"]
-    soil_types_general  = ["Clay Loam", "Sandy Loam", "Silty Clay", "Loam"]
-
-    if is_alluvial:
-        soil_type = rng.choice(soil_types_alluvial)
-    elif is_tropical:
-        soil_type = rng.choice(soil_types_tropical)
-    else:
-        soil_type = rng.choice(soil_types_general)
+    oc = round(rng.uniform(0.6, 2.2), 1)
 
     # Overall soil score (0-100)
     score = _compute_soil_score(ph, nitrogen, phosphorus, potassium, moisture, oc)
@@ -92,6 +95,9 @@ def _generate_soil_profile(lat: float, lon: float, area_ha: float) -> dict:
         "nitrogen": nitrogen,
         "phosphorus": phosphorus,
         "potassium": potassium,
+        "nitrogen_num": round(n_num, 1),
+        "phosphorus_num": round(p_num, 1),
+        "potassium_num": round(k_num, 1),
         "moisture": moisture,
         "organic_carbon": oc,
         "soil_type": soil_type,

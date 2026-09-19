@@ -72,17 +72,44 @@ async def analyze_farm(req: FarmAnalysisRequest):
         ndvi = satellite.get("ndvi_current", 0.55)
 
         # 3. Build feature dict for ML models
+        # In agronomy and the crop suitability dataset, rainfall is seasonal/monthly cumulative (50-250mm).
+        # Open-Meteo provides forecast_rain_mm (7-day sum) and rainfall_mm (current 1-hour).
+        # We extrapolate to monthly rainfall and calibrate with regional climatic norms.
+        forecast_7d = float(weather.get("forecast_rain_mm", 0))
+        now_month = now.month
+        is_monsoon = now_month in [6, 7, 8, 9]
+        is_winter = now_month in [11, 12, 1, 2]
+
+        if is_monsoon:
+            base_rain = 190.0 if (8 <= lat <= 20 and 72 <= lon <= 77) or lon >= 85 else 125.0
+        elif is_winter:
+            base_rain = 55.0 if lat > 27 else 35.0
+        else:
+            base_rain = 45.0
+
+        if forecast_7d > 0:
+            seasonal_rain = round(0.4 * base_rain + 0.6 * (forecast_7d * 4.0), 1)
+        else:
+            seasonal_rain = base_rain
+
         features = {
             "ph": soil.get("ph", 6.5),
             "nitrogen": soil.get("nitrogen", "Medium"),
             "phosphorus": soil.get("phosphorus", "Medium"),
             "potassium": soil.get("potassium", "Medium"),
+            "nitrogen_num": soil.get("nitrogen_num", 70.0),
+            "phosphorus_num": soil.get("phosphorus_num", 50.0),
+            "potassium_num": soil.get("potassium_num", 45.0),
             "moisture": soil.get("moisture", 55),
             "temperature_c": weather.get("temperature_c", 28),
-            "rainfall_mm": weather.get("rainfall_mm", 15),
+            "rainfall_mm": seasonal_rain,
             "humidity": weather.get("humidity", 65),
             "ndvi": ndvi,
             "area_ha": area_ha,
+            "lat": lat,
+            "lon": lon,
+            "month": now_month,
+            "season": season,
         }
 
         # 4. Run ML models

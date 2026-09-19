@@ -1,7 +1,10 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { MapContainer, TileLayer, useMap, useMapEvents, Polygon } from 'react-leaflet'
-import { Search, MapPin, Leaf, ArrowRight, Info, Trash2, MousePointer } from 'lucide-react'
+import { MapContainer, TileLayer, useMap, useMapEvents, Polygon, Marker, Popup } from 'react-leaflet'
+import {
+  Search, MapPin, Leaf, ArrowRight, Info, Trash2, MousePointer,
+  Compass, Navigation, Crosshair, AlertCircle, CheckCircle2
+} from 'lucide-react'
 import Navbar from '../components/Navbar'
 import LoadingScreen from '../components/LoadingScreen'
 import { useFarm } from '../context/FarmContext'
@@ -50,12 +53,15 @@ function FlyTo({ position }) {
   return null
 }
 
-// Component to handle map click for polygon drawing
-function DrawingLayer({ isDrawing, onPointAdded, onComplete }) {
+// Component to handle map clicks for polygon drawing and coordinate picking
+function MapInteractionLayer({ isDrawing, onPointAdded, onComplete, onMapClick, locationMode }) {
   useMapEvents({
     click(e) {
-      if (!isDrawing) return
-      onPointAdded([e.latlng.lat, e.latlng.lng])
+      if (isDrawing) {
+        onPointAdded([e.latlng.lat, e.latlng.lng])
+      } else if (locationMode === 'coords' && onMapClick) {
+        onMapClick([e.latlng.lat, e.latlng.lng])
+      }
     },
     dblclick(e) {
       if (!isDrawing) return
@@ -72,11 +78,9 @@ function DrawingMarkers({ points }) {
   const markersRef = useRef([])
 
   useEffect(() => {
-    // Clear old markers
     markersRef.current.forEach((m) => m.remove())
     markersRef.current = []
 
-    // Draw new markers
     points.forEach((p, i) => {
       const marker = L.circleMarker([p[0], p[1]], {
         radius: i === 0 ? 7 : 5,
@@ -102,6 +106,12 @@ export default function FarmSelection() {
   const { setFarmData, setAnalysisResult, setLoading, setError, loading, loadMockData } = useFarm()
 
   const [mapPosition, setMapPosition] = useState(null)
+  const [locationMode, setLocationMode] = useState('coords') // 'coords' | 'search'
+  const [inputLat, setInputLat] = useState('30.9009')
+  const [inputLng, setInputLng] = useState('75.8572')
+  const [coordsError, setCoordsError] = useState(null)
+  const [coordsSuccess, setCoordsSuccess] = useState(false)
+
   const [searchQuery, setSearchQuery] = useState('')
   const [searchResults, setSearchResults] = useState([])
   const [searching, setSearching] = useState(false)
@@ -130,11 +140,112 @@ export default function FarmSelection() {
   }
 
   const selectSearchResult = (result) => {
-    const pos = [parseFloat(result.lat), parseFloat(result.lon)]
+    const lat = parseFloat(result.lat)
+    const lng = parseFloat(result.lon)
+    const pos = [lat, lng]
     setMapPosition(pos)
+    setInputLat(lat.toFixed(5))
+    setInputLng(lng.toFixed(5))
     setSearchResults([])
     setSearchQuery(result.display_name.split(',').slice(0, 2).join(', '))
   }
+
+  const handleApplyCoords = () => {
+    const lat = parseFloat(inputLat)
+    const lng = parseFloat(inputLng)
+
+    if (isNaN(lat) || isNaN(lng)) {
+      setCoordsError('Please enter both Latitude and Longitude as valid numbers.')
+      return
+    }
+    if (lat < -90 || lat > 90) {
+      setCoordsError('Latitude must be between -90 and 90 degrees.')
+      return
+    }
+    if (lng < -180 || lng > 180) {
+      setCoordsError('Longitude must be between -180 and 180 degrees.')
+      return
+    }
+
+    setCoordsError(null)
+    const pos = [lat, lng]
+    setMapPosition(pos)
+    setSearchQuery(`${lat.toFixed(4)}°, ${lng.toFixed(4)}°`)
+    setCoordsSuccess(true)
+    setTimeout(() => setCoordsSuccess(false), 2500)
+  }
+
+  const handleUseCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      setCoordsError('Geolocation is not supported by your browser.')
+      return
+    }
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const lat = parseFloat(pos.coords.latitude.toFixed(5))
+        const lng = parseFloat(pos.coords.longitude.toFixed(5))
+        setInputLat(String(lat))
+        setInputLng(String(lng))
+        setMapPosition([lat, lng])
+        setCoordsError(null)
+        setSearchQuery(`Current Location (${lat}°, ${lng}°)`)
+        setCoordsSuccess(true)
+        setTimeout(() => setCoordsSuccess(false), 2500)
+      },
+      (err) => {
+        setCoordsError(`GPS error: ${err.message}`)
+      }
+    )
+  }
+
+  const handleGenerateBoundary = () => {
+    let lat = parseFloat(inputLat)
+    let lng = parseFloat(inputLng)
+
+    if (isNaN(lat) || isNaN(lng)) {
+      if (mapPosition) {
+        lat = mapPosition[0]
+        lng = mapPosition[1]
+      } else {
+        setCoordsError('Please enter valid coordinates first or set location.')
+        return
+      }
+    }
+
+    if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+      setCoordsError('Latitude must be between -90 and 90, Longitude between -180 and 180.')
+      return
+    }
+
+    // Generate ~2 hectare square centered at (lat, lng)
+    // 2 hectares = 20,000 m² ≈ 141.4m x 141.4m
+    // Half width ≈ 71 meters
+    const dLat = 71.0 / 111320.0
+    const dLng = 71.0 / (111320.0 * Math.cos((lat * Math.PI) / 180.0))
+
+    const poly = [
+      [lat + dLat, lng - dLng],
+      [lat + dLat, lng + dLng],
+      [lat - dLat, lng + dLng],
+      [lat - dLat, lng - dLng],
+    ]
+
+    setMapPosition([lat, lng])
+    setFinishedPolygon(poly)
+    setFarmArea(calculatePolygonArea(poly))
+    setIsDrawing(false)
+    setCoordsError(null)
+    setSearchQuery(`${lat.toFixed(4)}°, ${lng.toFixed(4)}°`)
+  }
+
+  const handleMapClick = useCallback((latlng) => {
+    if (locationMode === 'coords' && !isDrawing) {
+      setInputLat(latlng[0].toFixed(5))
+      setInputLng(latlng[1].toFixed(5))
+      setMapPosition(latlng)
+      setSearchQuery(`${latlng[0].toFixed(4)}°, ${latlng[1].toFixed(4)}°`)
+    }
+  }, [locationMode, isDrawing])
 
   const startDrawing = () => {
     setIsDrawing(true)
@@ -174,7 +285,7 @@ export default function FarmSelection() {
           finishedPolygon.reduce((s, p) => s + p[0], 0) / finishedPolygon.length,
           finishedPolygon.reduce((s, p) => s + p[1], 0) / finishedPolygon.length,
         ]
-      : mapPosition || [20.5937, 78.9629]
+      : mapPosition || [parseFloat(inputLat) || 20.5937, parseFloat(inputLng) || 78.9629]
 
     const payload = {
       polygon: finishedPolygon || [],
@@ -195,7 +306,7 @@ export default function FarmSelection() {
         farm: {
           name: farmName,
           area_hectares: farmArea || 2.4,
-          location: searchQuery || 'Selected Location',
+          location: searchQuery || `${center[0].toFixed(4)}°, ${center[1].toFixed(4)}°`,
           crop: selectedCrop,
         },
       })
@@ -221,12 +332,12 @@ export default function FarmSelection() {
             </span>
           </div>
           <h2 style={{ marginBottom: '8px' }}>Select Your Farm</h2>
-          <p style={{ color: 'var(--color-text-muted)', maxWidth: '560px' }}>
-            Search your location, then draw your farm boundary on the map. Click to add points, double-click to finish.
+          <p style={{ color: 'var(--color-text-muted)', maxWidth: '640px', fontSize: '0.92rem' }}>
+            Enter your farm coordinates directly or search by location. You can draw your farm boundary on the map, auto-generate a boundary, or analyze at your coordinates directly.
           </p>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '320px 1fr', gap: '24px', alignItems: 'start' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '340px 1fr', gap: '24px', alignItems: 'start' }}>
           {/* ===== SIDEBAR ===== */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
 
@@ -275,65 +386,228 @@ export default function FarmSelection() {
               </div>
             </div>
 
-            {/* Location Search */}
+            {/* Location Card with Tabs */}
             <div className="card" style={{ padding: '20px' }}>
-              <h4 style={{ marginBottom: '14px', fontFamily: 'var(--font-heading)', fontSize: '1rem' }}>Find Location</h4>
-              <form onSubmit={handleSearch} style={{ display: 'flex', gap: '8px', marginBottom: '10px' }}>
-                <input
-                  id="location-search"
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search village, district…"
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+                <h4 style={{ margin: 0, fontFamily: 'var(--font-heading)', fontSize: '1rem' }}>Farm Location</h4>
+              </div>
+
+              {/* Mode Switcher */}
+              <div style={{
+                display: 'flex', background: 'var(--color-cream-dark)',
+                padding: '3px', borderRadius: 'var(--radius-md)',
+                marginBottom: '14px', border: '1px solid var(--color-cream-border)'
+              }}>
+                <button
+                  type="button"
+                  id="tab-coords-btn"
+                  onClick={() => setLocationMode('coords')}
                   style={{
-                    flex: 1, padding: '8px 12px',
-                    border: '1.5px solid var(--color-cream-border)',
-                    borderRadius: 'var(--radius-md)',
-                    fontFamily: 'var(--font-body)', fontSize: '0.85rem',
-                    color: 'var(--color-text-primary)', background: 'var(--color-white)',
-                    outline: 'none',
+                    flex: 1, padding: '7px 10px', borderRadius: '6px',
+                    border: 'none', cursor: 'pointer', fontSize: '0.78rem', fontWeight: 600,
+                    background: locationMode === 'coords' ? 'var(--color-white)' : 'transparent',
+                    color: locationMode === 'coords' ? 'var(--color-text-primary)' : 'var(--color-text-muted)',
+                    boxShadow: locationMode === 'coords' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+                    transition: 'all 0.2s ease',
                   }}
-                />
-                <button type="submit" className="btn btn-brown" style={{ padding: '8px 14px', borderRadius: 'var(--radius-md)', flexShrink: 0 }} disabled={searching}>
-                  <Search size={15} />
+                >
+                  <Compass size={14} /> Coordinates
                 </button>
-              </form>
-              {searchResults.length > 0 && (
-                <div style={{ border: '1px solid var(--color-cream-border)', borderRadius: 'var(--radius-md)', overflow: 'hidden', marginBottom: '10px' }}>
-                  {searchResults.map((r) => (
-                    <button key={r.place_id}
-                      onClick={() => selectSearchResult(r)}
+                <button
+                  type="button"
+                  id="tab-search-btn"
+                  onClick={() => setLocationMode('search')}
+                  style={{
+                    flex: 1, padding: '7px 10px', borderRadius: '6px',
+                    border: 'none', cursor: 'pointer', fontSize: '0.78rem', fontWeight: 600,
+                    background: locationMode === 'search' ? 'var(--color-white)' : 'transparent',
+                    color: locationMode === 'search' ? 'var(--color-text-primary)' : 'var(--color-text-muted)',
+                    boxShadow: locationMode === 'search' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+                    transition: 'all 0.2s ease',
+                  }}
+                >
+                  <Search size={14} /> Search Place
+                </button>
+              </div>
+
+              {/* Coordinates Mode */}
+              {locationMode === 'coords' && (
+                <div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '10px' }}>
+                    <div>
+                      <label style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--color-text-muted)', display: 'block', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>
+                        Latitude
+                      </label>
+                      <input
+                        id="latitude-input"
+                        type="number"
+                        step="any"
+                        value={inputLat}
+                        onChange={(e) => { setInputLat(e.target.value); setCoordsError(null); }}
+                        placeholder="e.g. 30.9009"
+                        style={{
+                          width: '100%', padding: '8px 10px',
+                          border: coordsError ? '1.5px solid #E63946' : '1.5px solid var(--color-cream-border)',
+                          borderRadius: 'var(--radius-md)',
+                          fontSize: '0.86rem', outline: 'none', boxSizing: 'border-box',
+                          background: 'var(--color-white)', color: 'var(--color-text-primary)',
+                        }}
+                      />
+                    </div>
+                    <div>
+                      <label style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--color-text-muted)', display: 'block', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>
+                        Longitude
+                      </label>
+                      <input
+                        id="longitude-input"
+                        type="number"
+                        step="any"
+                        value={inputLng}
+                        onChange={(e) => { setInputLng(e.target.value); setCoordsError(null); }}
+                        placeholder="e.g. 75.8572"
+                        style={{
+                          width: '100%', padding: '8px 10px',
+                          border: coordsError ? '1.5px solid #E63946' : '1.5px solid var(--color-cream-border)',
+                          borderRadius: 'var(--radius-md)',
+                          fontSize: '0.86rem', outline: 'none', boxSizing: 'border-box',
+                          background: 'var(--color-white)', color: 'var(--color-text-primary)',
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  {coordsError && (
+                    <div style={{ fontSize: '0.75rem', color: '#E63946', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                      <AlertCircle size={13} style={{ flexShrink: 0 }} /> {coordsError}
+                    </div>
+                  )}
+
+                  {coordsSuccess && (
+                    <div style={{ fontSize: '0.75rem', color: '#2D6A4F', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                      <CheckCircle2 size={13} style={{ flexShrink: 0 }} /> Location updated successfully!
+                    </div>
+                  )}
+
+                  <div style={{ display: 'flex', gap: '8px', marginBottom: '10px' }}>
+                    <button
+                      type="button"
+                      id="apply-coords-btn"
+                      onClick={handleApplyCoords}
+                      className="btn btn-brown"
+                      style={{ flex: 1, padding: '8px 12px', fontSize: '0.8rem', justifyContent: 'center' }}
+                    >
+                      <MapPin size={14} /> Set Coordinates
+                    </button>
+                    <button
+                      type="button"
+                      id="gps-location-btn"
+                      onClick={handleUseCurrentLocation}
+                      title="Use Current GPS Location"
                       style={{
-                        width: '100%', textAlign: 'left', padding: '9px 12px',
-                        border: 'none', borderBottom: '1px solid var(--color-cream-border)',
-                        background: 'var(--color-white)', cursor: 'pointer',
-                        fontSize: '0.78rem', color: 'var(--color-text-secondary)',
-                        fontFamily: 'var(--font-body)',
+                        padding: '8px 12px', background: 'var(--color-white)',
+                        border: '1.5px solid var(--color-cream-border)', borderRadius: 'var(--radius-md)',
+                        cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        color: 'var(--color-brown-700)', transition: 'all 0.2s ease',
                       }}
                     >
-                      📍 {r.display_name.split(',').slice(0, 3).join(',')}
+                      <Navigation size={15} />
+                    </button>
+                  </div>
+
+                  <button
+                    type="button"
+                    id="auto-boundary-btn"
+                    onClick={handleGenerateBoundary}
+                    className="btn"
+                    style={{
+                      width: '100%', padding: '8px 12px', fontSize: '0.78rem',
+                      background: 'rgba(45, 106, 79, 0.08)', color: 'var(--color-green-dark)',
+                      border: '1.5px dashed var(--color-green-dark)', justifyContent: 'center',
+                      marginBottom: '10px'
+                    }}
+                  >
+                    <Crosshair size={14} /> Auto-Generate 2 ha Boundary Here
+                  </button>
+
+                  <div style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', lineHeight: 1.4 }}>
+                    💡 <em>Click anywhere on the map to automatically pick coordinates.</em>
+                  </div>
+                </div>
+              )}
+
+              {/* Search Mode */}
+              {locationMode === 'search' && (
+                <div>
+                  <form onSubmit={handleSearch} style={{ display: 'flex', gap: '8px', marginBottom: '10px' }}>
+                    <input
+                      id="location-search"
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder="Search village, district…"
+                      style={{
+                        flex: 1, padding: '8px 12px',
+                        border: '1.5px solid var(--color-cream-border)',
+                        borderRadius: 'var(--radius-md)',
+                        fontFamily: 'var(--font-body)', fontSize: '0.85rem',
+                        color: 'var(--color-text-primary)', background: 'var(--color-white)',
+                        outline: 'none',
+                      }}
+                    />
+                    <button type="submit" className="btn btn-brown" style={{ padding: '8px 14px', borderRadius: 'var(--radius-md)', flexShrink: 0 }} disabled={searching}>
+                      <Search size={15} />
+                    </button>
+                  </form>
+                  {searchResults.length > 0 && (
+                    <div style={{ border: '1px solid var(--color-cream-border)', borderRadius: 'var(--radius-md)', overflow: 'hidden', marginBottom: '10px' }}>
+                      {searchResults.map((r) => (
+                        <button key={r.place_id}
+                          onClick={() => selectSearchResult(r)}
+                          style={{
+                            width: '100%', textAlign: 'left', padding: '9px 12px',
+                            border: 'none', borderBottom: '1px solid var(--color-cream-border)',
+                            background: 'var(--color-white)', cursor: 'pointer',
+                            fontSize: '0.78rem', color: 'var(--color-text-secondary)',
+                            fontFamily: 'var(--font-body)',
+                          }}
+                        >
+                          📍 {r.display_name.split(',').slice(0, 3).join(',')}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Quick Pick Buttons */}
+              <div style={{ marginTop: '12px', paddingTop: '10px', borderTop: '1px solid var(--color-cream-border)' }}>
+                <div style={{ fontSize: '0.72rem', fontWeight: '700', color: 'var(--color-text-muted)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>
+                  Quick Presets
+                </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                  {POPULAR_LOCATIONS.map((loc) => (
+                    <button key={loc.name}
+                      onClick={() => {
+                        setMapPosition([loc.lat, loc.lng])
+                        setInputLat(loc.lat.toFixed(5))
+                        setInputLng(loc.lng.toFixed(5))
+                        setSearchQuery(loc.name)
+                        setCoordsError(null)
+                      }}
+                      style={{
+                        padding: '4px 10px', borderRadius: 'var(--radius-full)',
+                        border: '1px solid var(--color-cream-border)',
+                        background: 'var(--color-white)', cursor: 'pointer',
+                        fontSize: '0.72rem', color: 'var(--color-text-secondary)',
+                        fontFamily: 'var(--font-body)', fontWeight: '600',
+                      }}
+                    >
+                      {loc.name.split(',')[0]}
                     </button>
                   ))}
                 </div>
-              )}
-              <div style={{ fontSize: '0.72rem', fontWeight: '700', color: 'var(--color-text-muted)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>
-                Quick Pick
-              </div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                {POPULAR_LOCATIONS.map((loc) => (
-                  <button key={loc.name}
-                    onClick={() => setMapPosition([loc.lat, loc.lng])}
-                    style={{
-                      padding: '4px 10px', borderRadius: 'var(--radius-full)',
-                      border: '1px solid var(--color-cream-border)',
-                      background: 'var(--color-white)', cursor: 'pointer',
-                      fontSize: '0.72rem', color: 'var(--color-text-secondary)',
-                      fontFamily: 'var(--font-body)', fontWeight: '600',
-                    }}
-                  >
-                    {loc.name.split(',')[0]}
-                  </button>
-                ))}
               </div>
             </div>
 
@@ -353,7 +627,7 @@ export default function FarmSelection() {
                     <div style={{ fontSize: '0.7rem', fontWeight: '700', color: 'var(--color-green-dark)', textTransform: 'uppercase' }}>Farm Area</div>
                     <div style={{ fontSize: '1.5rem', fontWeight: '900', color: 'var(--color-green-dark)' }}>{farmArea} ha</div>
                   </div>
-                  <button onClick={clearPolygon} style={{ background: 'rgba(45,106,79,0.1)', border: 'none', cursor: 'pointer', borderRadius: 'var(--radius-md)', padding: '8px', color: 'var(--color-green-dark)' }}>
+                  <button onClick={clearPolygon} title="Remove boundary" style={{ background: 'rgba(45,106,79,0.1)', border: 'none', cursor: 'pointer', borderRadius: 'var(--radius-md)', padding: '8px', color: 'var(--color-green-dark)' }}>
                     <Trash2 size={15} />
                   </button>
                 </div>
@@ -373,7 +647,7 @@ export default function FarmSelection() {
                   <MousePointer size={15} />
                   {isDrawing
                     ? `Finish (${drawnPoints.length} pts) — Double-click map`
-                    : 'Draw Farm Boundary'}
+                    : 'Draw Custom Boundary'}
                 </button>
               )}
 
@@ -384,8 +658,8 @@ export default function FarmSelection() {
                 <Info size={14} style={{ color: 'var(--color-brown-400)', flexShrink: 0, marginTop: '1px' }} />
                 <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', margin: 0, lineHeight: 1.6 }}>
                   {isDrawing
-                    ? <><strong>Click</strong> to add points · <strong>Double-click</strong> to finish the polygon</>
-                    : <>Click <strong>"Draw Farm Boundary"</strong> then click on the map to draw your farm outline.</>
+                    ? <><strong>Click</strong> to add points · <strong>Double-click</strong> to finish the boundary.</>
+                    : <>You can draw custom polygon points or click <strong>"Auto-Generate 2 ha Boundary"</strong> above.</>
                   }
                 </p>
               </div>
@@ -401,7 +675,7 @@ export default function FarmSelection() {
               <Leaf size={18} /> Analyze Farm <ArrowRight size={16} />
             </button>
             <p style={{ fontSize: '0.73rem', color: 'var(--color-text-muted)', textAlign: 'center', margin: '0' }}>
-              No polygon drawn? Demo data will be used.
+              Coordinates or polygon will be used to fetch live meteorological and satellite indicators.
             </p>
           </div>
 
@@ -419,21 +693,39 @@ export default function FarmSelection() {
               </div>
             )}
             <div style={{
+              position: 'relative',
               borderRadius: 'var(--radius-lg)', overflow: 'hidden',
               border: '1px solid var(--color-cream-border)', boxShadow: 'var(--shadow-md)',
               height: '580px', cursor: isDrawing ? 'crosshair' : 'grab',
             }}>
-              <MapContainer center={[20.5937, 78.9629]} zoom={5} style={{ height: '100%', width: '100%' }}>
+              <MapContainer center={[30.9009, 75.8572]} zoom={6} style={{ height: '100%', width: '100%' }}>
                 <TileLayer
                   attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
                 {mapPosition && <FlyTo position={mapPosition} />}
-                <DrawingLayer
+                <MapInteractionLayer
                   isDrawing={isDrawing}
                   onPointAdded={handlePointAdded}
                   onComplete={handleComplete}
+                  onMapClick={handleMapClick}
+                  locationMode={locationMode}
                 />
+                {/* Marker at current center */}
+                {mapPosition && (
+                  <Marker position={mapPosition}>
+                    <Popup>
+                      <div style={{ padding: '4px', textAlign: 'center' }}>
+                        <strong style={{ display: 'block', color: 'var(--color-green-dark)', marginBottom: '2px' }}>
+                          Farm Center
+                        </strong>
+                        <span style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>
+                          {mapPosition[0].toFixed(5)}°, {mapPosition[1].toFixed(5)}°
+                        </span>
+                      </div>
+                    </Popup>
+                  </Marker>
+                )}
                 {drawnPoints.length > 0 && !finishedPolygon && (
                   <DrawingMarkers points={drawnPoints} />
                 )}
@@ -452,6 +744,21 @@ export default function FarmSelection() {
                   />
                 )}
               </MapContainer>
+
+              {/* Coordinate readout badge overlay */}
+              {mapPosition && (
+                <div style={{
+                  position: 'absolute', bottom: '16px', right: '16px', zIndex: 1000,
+                  background: 'rgba(255, 255, 255, 0.92)', backdropFilter: 'blur(4px)',
+                  padding: '6px 12px', borderRadius: 'var(--radius-md)',
+                  boxShadow: 'var(--shadow-md)', border: '1px solid var(--color-cream-border)',
+                  fontSize: '0.76rem', fontWeight: 600, color: 'var(--color-brown-700)',
+                  display: 'flex', alignItems: 'center', gap: '6px'
+                }}>
+                  <MapPin size={13} color="var(--color-orange)" />
+                  Lat: {mapPosition[0].toFixed(4)}° | Lng: {mapPosition[1].toFixed(4)}°
+                </div>
+              )}
             </div>
           </div>
         </div>
