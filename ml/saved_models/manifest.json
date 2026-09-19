@@ -1,0 +1,76 @@
+{
+  "crop_model": {
+    "file": "crop_model.pkl",
+    "type": "RandomForestClassifier",
+    "features": [
+      "N",
+      "P",
+      "K",
+      "temperature",
+      "humidity",
+      "ph",
+      "rainfall"
+    ],
+    "classes": [
+      "apple",
+      "banana",
+      "blackgram",
+      "chickpea",
+      "coconut",
+      "coffee",
+      "cotton",
+      "grapes",
+      "jute",
+      "kidneybeans",
+      "lentil",
+      "maize",
+      "mango",
+      "mothbeans",
+      "mungbean",
+      "muskmelon",
+      "orange",
+      "papaya",
+      "pigeonpeas",
+      "pomegranate",
+      "rice",
+      "watermelon"
+    ],
+    "accuracy": 0.9932
+  },
+  "yield_model": {
+    "file": "yield_model.pkl",
+    "type": "XGBoost",
+    "features": [
+      "crop_enc",
+      "area",
+      "annual_rainfall",
+      "fertilizer",
+      "pesticide",
+      "avg_temperature",
+      "max_temperature",
+      "min_temperature",
+      "season_enc"
+    ],
+    "metrics": {
+      "mae": 1.1862,
+      "rmse": 3.6579,
+      "r2": 0.8812
+    }
+  },
+  "soil_lookup": {
+    "file": "soil_lookup.pkl",
+    "type": "district_lookup",
+    "columns": [
+      "nitrogen",
+      "phosphorus",
+      "potassium",
+      "ph"
+    ],
+    "global_stats": {
+      "nitrogen": 24.77,
+      "phosphorus": 61.157,
+      "potassium": 61.74,
+      "ph": 7.075
+    }
+  }
+}

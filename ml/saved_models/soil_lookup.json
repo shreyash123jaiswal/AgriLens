@@ -1,0 +1,723 @@
+{
+  "lookup": [
+    {
+      "district": "Ahmedabad",
+      "nitrogen": 21.903,
+      "phosphorus": 68.292,
+      "potassium": 76.321,
+      "ph": 7.032
+    },
+    {
+      "district": "Amreli",
+      "nitrogen": 22.204,
+      "phosphorus": 74.098,
+      "potassium": 65.825,
+      "ph": 7.05
+    },
+    {
+      "district": "Anand",
+      "nitrogen": 24.522,
+      "phosphorus": 79.752,
+      "potassium": 73.783,
+      "ph": 7.105
+    },
+    {
+      "district": "Ariyalur",
+      "nitrogen": 20.046,
+      "phosphorus": 50.896,
+      "potassium": 49.791,
+      "ph": 6.999
+    },
+    {
+      "district": "Arvalli",
+      "nitrogen": 20.918,
+      "phosphorus": 73.909,
+      "potassium": 65.781,
+      "ph": 7.042
+    },
+    {
+      "district": "Bagalakote",
+      "nitrogen": 33.447,
+      "phosphorus": 60.602,
+      "potassium": 55.929,
+      "ph": 7.195
+    },
+    {
+      "district": "Ballari",
+      "nitrogen": 44.621,
+      "phosphorus": 54.03,
+      "potassium": 48.801,
+      "ph": 7.464
+    },
+    {
+      "district": "Banas Kantha",
+      "nitrogen": 20.359,
+      "phosphorus": 74.374,
+      "potassium": 68.339,
+      "ph": 7.075
+    },
+    {
+      "district": "Bangalore Rural",
+      "nitrogen": 22.233,
+      "phosphorus": 66.331,
+      "potassium": 49.299,
+      "ph": 6.772
+    },
+    {
+      "district": "Belagavi",
+      "nitrogen": 21.847,
+      "phosphorus": 50.603,
+      "potassium": 48.234,
+      "ph": 7.602
+    },
+    {
+      "district": "Bengaluru urban",
+      "nitrogen": 21.853,
+      "phosphorus": 63.357,
+      "potassium": 49.108,
+      "ph": 6.929
+    },
+    {
+      "district": "Bharuch",
+      "nitrogen": 20.359,
+      "phosphorus": 74.374,
+      "potassium": 68.339,
+      "ph": 7.075
+    },
+    {
+      "district": "Bhavnagar",
+      "nitrogen": 23.877,
+      "phosphorus": 47.826,
+      "potassium": 59.062,
+      "ph": 7.016
+    },
+    {
+      "district": "Bidar",
+      "nitrogen": 36.286,
+      "phosphorus": 47.852,
+      "potassium": 79.585,
+      "ph": 7.001
+    },
+    {
+      "district": "Botad",
+      "nitrogen": 23.496,
+      "phosphorus": 46.653,
+      "potassium": 78.82,
+      "ph": 7.0
+    },
+    {
+      "district": "Chamarajanagar",
+      "nitrogen": 54.999,
+      "phosphorus": 66.326,
+      "potassium": 45.261,
+      "ph": 7.015
+    },
+    {
+      "district": "Chengalpattu",
+      "nitrogen": 20.888,
+      "phosphorus": 47.852,
+      "potassium": 42.922,
+      "ph": 7.012
+    },
+    {
+      "district": "Chhotaudepur",
+      "nitrogen": 31.152,
+      "phosphorus": 44.242,
+      "potassium": 61.804,
+      "ph": 7.029
+    },
+    {
+      "district": "Chikkaballapura",
+      "nitrogen": 20.727,
+      "phosphorus": 73.402,
+      "potassium": 59.405,
+      "ph": 6.966
+    },
+    {
+      "district": "Chikkamagaluru",
+      "nitrogen": 26.383,
+      "phosphorus": 70.591,
+      "potassium": 54.251,
+      "ph": 6.785
+    },
+    {
+      "district": "Chitradurga",
+      "nitrogen": 21.633,
+      "phosphorus": 73.491,
+      "potassium": 59.692,
+      "ph": 7.0
+    },
+    {
+      "district": "Coimbatore",
+      "nitrogen": 20.354,
+      "phosphorus": 42.788,
+      "potassium": 78.349,
+      "ph": 7.321
+    },
+    {
+      "district": "Cuddalore",
+      "nitrogen": 20.021,
+      "phosphorus": 70.567,
+      "potassium": 51.771,
+      "ph": 7.126
+    },
+    {
+      "district": "Dakshina Kannada",
+      "nitrogen": 21.074,
+      "phosphorus": 54.674,
+      "potassium": 40.899,
+      "ph": 6.768
+    },
+    {
+      "district": "Dang",
+      "nitrogen": 39.48,
+      "phosphorus": 46.804,
+      "potassium": 48.325,
+      "ph": 7.0
+    },
+    {
+      "district": "Davanagere",
+      "nitrogen": 48.956,
+      "phosphorus": 75.035,
+      "potassium": 70.832,
+      "ph": 6.998
+    },
+    {
+      "district": "Devbhumi Dwarka",
+      "nitrogen": 40.3,
+      "phosphorus": 77.37,
+      "potassium": 54.634,
+      "ph": 7.084
+    },
+    {
+      "district": "Dharmapuri",
+      "nitrogen": 20.044,
+      "phosphorus": 60.235,
+      "potassium": 58.697,
+      "ph": 7.068
+    },
+    {
+      "district": "Dharwad",
+      "nitrogen": 48.919,
+      "phosphorus": 51.329,
+      "potassium": 61.296,
+      "ph": 7.493
+    },
+    {
+      "district": "Dindigul",
+      "nitrogen": 20.732,
+      "phosphorus": 41.293,
+      "potassium": 71.134,
+      "ph": 7.034
+    },
+    {
+      "district": "Dohad",
+      "nitrogen": 25.16,
+      "phosphorus": 68.523,
+      "potassium": 61.829,
+      "ph": 7.0
+    },
+    {
+      "district": "Erode",
+      "nitrogen": 20.134,
+      "phosphorus": 43.795,
+      "potassium": 74.818,
+      "ph": 7.055
+    },
+    {
+      "district": "Gadag",
+      "nitrogen": 49.399,
+      "phosphorus": 52.868,
+      "potassium": 63.273,
+      "ph": 7.002
+    },
+    {
+      "district": "Gandhinagar",
+      "nitrogen": 20.366,
+      "phosphorus": 79.566,
+      "potassium": 76.519,
+      "ph": 7.028
+    },
+    {
+      "district": "Gir Somnath",
+      "nitrogen": 36.489,
+      "phosphorus": 50.058,
+      "potassium": 44.068,
+      "ph": 7.031
+    },
+    {
+      "district": "Hassan",
+      "nitrogen": 55.811,
+      "phosphorus": 77.84,
+      "potassium": 57.896,
+      "ph": 6.947
+    },
+    {
+      "district": "Haveri",
+      "nitrogen": 40.985,
+      "phosphorus": 50.6,
+      "potassium": 53.452,
+      "ph": 7.083
+    },
+    {
+      "district": "Jamnagar",
+      "nitrogen": 34.249,
+      "phosphorus": 71.814,
+      "potassium": 59.196,
+      "ph": 7.137
+    },
+    {
+      "district": "Junagadh",
+      "nitrogen": 22.229,
+      "phosphorus": 72.555,
+      "potassium": 68.631,
+      "ph": 7.001
+    },
+    {
+      "district": "Kachchh",
+      "nitrogen": 25.572,
+      "phosphorus": 62.131,
+      "potassium": 72.416,
+      "ph": 7.277
+    },
+    {
+      "district": "Kalaburagi",
+      "nitrogen": 25.431,
+      "phosphorus": 78.824,
+      "potassium": 79.871,
+      "ph": 7.004
+    },
+    {
+      "district": "Kallakurichi",
+      "nitrogen": 20.026,
+      "phosphorus": 59.588,
+      "potassium": 68.242,
+      "ph": 7.014
+    },
+    {
+      "district": "Kanchipuram",
+      "nitrogen": 20.11,
+      "phosphorus": 51.982,
+      "potassium": 56.293,
+      "ph": 6.988
+    },
+    {
+      "district": "Kanniyakumari",
+      "nitrogen": 20.386,
+      "phosphorus": 75.489,
+      "potassium": 50.284,
+      "ph": 6.709
+    },
+    {
+      "district": "Karur",
+      "nitrogen": 20.032,
+      "phosphorus": 47.829,
+      "potassium": 67.015,
+      "ph": 7.283
+    },
+    {
+      "district": "Kheda",
+      "nitrogen": 20.505,
+      "phosphorus": 74.57,
+      "potassium": 68.266,
+      "ph": 7.143
+    },
+    {
+      "district": "Kodagu",
+      "nitrogen": 49.885,
+      "phosphorus": 64.002,
+      "potassium": 59.792,
+      "ph": 6.993
+    },
+    {
+      "district": "Kolar",
+      "nitrogen": 22.239,
+      "phosphorus": 69.591,
+      "potassium": 46.551,
+      "ph": 6.919
+    },
+    {
+      "district": "Koppal",
+      "nitrogen": 56.538,
+      "phosphorus": 77.739,
+      "potassium": 65.401,
+      "ph": 7.073
+    },
+    {
+      "district": "Krishnagiri",
+      "nitrogen": 20.013,
+      "phosphorus": 53.756,
+      "potassium": 49.462,
+      "ph": 7.047
+    },
+    {
+      "district": "Madurai",
+      "nitrogen": 20.062,
+      "phosphorus": 57.183,
+      "potassium": 67.365,
+      "ph": 7.055
+    },
+    {
+      "district": "Mahesana",
+      "nitrogen": 20.636,
+      "phosphorus": 60.548,
+      "potassium": 50.59,
+      "ph": 7.325
+    },
+    {
+      "district": "Mahisagar",
+      "nitrogen": 22.478,
+      "phosphorus": 58.035,
+      "potassium": 74.416,
+      "ph": 7.0
+    },
+    {
+      "district": "Mandya",
+      "nitrogen": 25.516,
+      "phosphorus": 69.697,
+      "potassium": 56.02,
+      "ph": 6.946
+    },
+    {
+      "district": "Mayiladuthurai",
+      "nitrogen": 20.394,
+      "phosphorus": 59.532,
+      "potassium": 59.147,
+      "ph": 7.017
+    },
+    {
+      "district": "Morbi",
+      "nitrogen": 35.847,
+      "phosphorus": 78.015,
+      "potassium": 63.554,
+      "ph": 7.088
+    },
+    {
+      "district": "Mysuru",
+      "nitrogen": 20.172,
+      "phosphorus": 73.156,
+      "potassium": 59.387,
+      "ph": 6.9
+    },
+    {
+      "district": "Nagapattinam",
+      "nitrogen": 20.107,
+      "phosphorus": 63.827,
+      "potassium": 56.264,
+      "ph": 7.014
+    },
+    {
+      "district": "Namakkal",
+      "nitrogen": 20.176,
+      "phosphorus": 57.846,
+      "potassium": 74.041,
+      "ph": 7.523
+    },
+    {
+      "district": "Narmada",
+      "nitrogen": 32.035,
+      "phosphorus": 63.189,
+      "potassium": 62.713,
+      "ph": 6.998
+    },
+    {
+      "district": "Navsari",
+      "nitrogen": 31.293,
+      "phosphorus": 79.964,
+      "potassium": 75.967,
+      "ph": 7.0
+    },
+    {
+      "district": "Panch Mahals",
+      "nitrogen": 33.969,
+      "phosphorus": 63.834,
+      "potassium": 61.41,
+      "ph": 7.002
+    },
+    {
+      "district": "Patan",
+      "nitrogen": 20.069,
+      "phosphorus": 67.335,
+      "potassium": 77.619,
+      "ph": 7.001
+    },
+    {
+      "district": "Perambalur",
+      "nitrogen": 20.021,
+      "phosphorus": 39.391,
+      "potassium": 64.326,
+      "ph": 7.18
+    },
+    {
+      "district": "Porbandar",
+      "nitrogen": 25.457,
+      "phosphorus": 56.864,
+      "potassium": 78.521,
+      "ph": 7.002
+    },
+    {
+      "district": "Pudukkottai",
+      "nitrogen": 20.078,
+      "phosphorus": 50.02,
+      "potassium": 52.814,
+      "ph": 7.014
+    },
+    {
+      "district": "Raichur",
+      "nitrogen": 20.052,
+      "phosphorus": 49.757,
+      "potassium": 48.162,
+      "ph": 7.054
+    },
+    {
+      "district": "Rajkot",
+      "nitrogen": 24.181,
+      "phosphorus": 79.167,
+      "potassium": 73.711,
+      "ph": 6.95
+    },
+    {
+      "district": "Ramanathapuram",
+      "nitrogen": 20.066,
+      "phosphorus": 55.12,
+      "potassium": 74.715,
+      "ph": 6.951
+    },
+    {
+      "district": "Ramangara",
+      "nitrogen": 44.359,
+      "phosphorus": 69.978,
+      "potassium": 47.254,
+      "ph": 6.91
+    },
+    {
+      "district": "Ranipet",
+      "nitrogen": 20.036,
+      "phosphorus": 63.879,
+      "potassium": 42.437,
+      "ph": 7.147
+    },
+    {
+      "district": "Sabar Kantha",
+      "nitrogen": 20.097,
+      "phosphorus": 76.625,
+      "potassium": 64.235,
+      "ph": 7.044
+    },
+    {
+      "district": "Salem",
+      "nitrogen": 20.137,
+      "phosphorus": 46.138,
+      "potassium": 66.47,
+      "ph": 7.21
+    },
+    {
+      "district": "Shivamogga",
+      "nitrogen": 27.487,
+      "phosphorus": 56.98,
+      "potassium": 61.591,
+      "ph": 6.83
+    },
+    {
+      "district": "Sivaganga",
+      "nitrogen": 20.126,
+      "phosphorus": 50.868,
+      "potassium": 65.987,
+      "ph": 7.085
+    },
+    {
+      "district": "Surat",
+      "nitrogen": 22.5,
+      "phosphorus": 74.044,
+      "potassium": 64.59,
+      "ph": 7.028
+    },
+    {
+      "district": "Surendranagar",
+      "nitrogen": 30.794,
+      "phosphorus": 72.678,
+      "potassium": 70.874,
+      "ph": 7.014
+    },
+    {
+      "district": "Tapi",
+      "nitrogen": 25.095,
+      "phosphorus": 75.518,
+      "potassium": 71.012,
+      "ph": 7.007
+    },
+    {
+      "district": "Tenkasi",
+      "nitrogen": 20.011,
+      "phosphorus": 75.964,
+      "potassium": 74.248,
+      "ph": 7.056
+    },
+    {
+      "district": "Thanjavur",
+      "nitrogen": 20.267,
+      "phosphorus": 46.566,
+      "potassium": 53.296,
+      "ph": 7.044
+    },
+    {
+      "district": "The Nilgiris",
+      "nitrogen": 27.398,
+      "phosphorus": 78.994,
+      "potassium": 63.331,
+      "ph": 6.653
+    },
+    {
+      "district": "Theni",
+      "nitrogen": 20.181,
+      "phosphorus": 59.457,
+      "potassium": 73.598,
+      "ph": 7.132
+    },
+    {
+      "district": "Thiruvallur",
+      "nitrogen": 20.068,
+      "phosphorus": 62.157,
+      "potassium": 38.78,
+      "ph": 6.875
+    },
+    {
+      "district": "Thiruvarur",
+      "nitrogen": 20.042,
+      "phosphorus": 65.422,
+      "potassium": 61.44,
+      "ph": 7.038
+    },
+    {
+      "district": "Tiruchippalli",
+      "nitrogen": 20.201,
+      "phosphorus": 56.756,
+      "potassium": 69.866,
+      "ph": 7.136
+    },
+    {
+      "district": "Tirunelveli",
+      "nitrogen": 22.378,
+      "phosphorus": 56.283,
+      "potassium": 58.53,
+      "ph": 7.179
+    },
+    {
+      "district": "Tirupathur",
+      "nitrogen": 20.105,
+      "phosphorus": 63.437,
+      "potassium": 57.992,
+      "ph": 7.157
+    },
+    {
+      "district": "Tiruppur",
+      "nitrogen": 20.061,
+      "phosphorus": 45.24,
+      "potassium": 78.969,
+      "ph": 7.567
+    },
+    {
+      "district": "Tiruvannamalai",
+      "nitrogen": 20.426,
+      "phosphorus": 55.845,
+      "potassium": 44.855,
+      "ph": 7.027
+    },
+    {
+      "district": "Tumakuru",
+      "nitrogen": 25.528,
+      "phosphorus": 68.026,
+      "potassium": 56.437,
+      "ph": 6.99
+    },
+    {
+      "district": "Tuticorn",
+      "nitrogen": 20.002,
+      "phosphorus": 56.181,
+      "potassium": 69.876,
+      "ph": 7.276
+    },
+    {
+      "district": "Udupi",
+      "nitrogen": 31.598,
+      "phosphorus": 58.218,
+      "potassium": 43.547,
+      "ph": 6.159
+    },
+    {
+      "district": "Uttara Kannada",
+      "nitrogen": 25.216,
+      "phosphorus": 53.061,
+      "potassium": 44.709,
+      "ph": 6.847
+    },
+    {
+      "district": "Vadodara",
+      "nitrogen": 26.338,
+      "phosphorus": 63.475,
+      "potassium": 58.342,
+      "ph": 7.015
+    },
+    {
+      "district": "Valsad",
+      "nitrogen": 31.641,
+      "phosphorus": 76.137,
+      "potassium": 63.676,
+      "ph": 7.0
+    },
+    {
+      "district": "Vellore",
+      "nitrogen": 20.082,
+      "phosphorus": 37.852,
+      "potassium": 54.688,
+      "ph": 7.345
+    },
+    {
+      "district": "Vijayanagar",
+      "nitrogen": 32.545,
+      "phosphorus": 53.065,
+      "potassium": 39.81,
+      "ph": 7.305
+    },
+    {
+      "district": "Vijayapura",
+      "nitrogen": 20.878,
+      "phosphorus": 75.85,
+      "potassium": 61.067,
+      "ph": 7.228
+    },
+    {
+      "district": "Villupuram",
+      "nitrogen": 20.039,
+      "phosphorus": 58.25,
+      "potassium": 56.093,
+      "ph": 7.004
+    },
+    {
+      "district": "Virudhunagar",
+      "nitrogen": 20.119,
+      "phosphorus": 43.041,
+      "potassium": 67.056,
+      "ph": 7.343
+    },
+    {
+      "district": "Yadgir",
+      "nitrogen": 24.996,
+      "phosphorus": 70.122,
+      "potassium": 76.415,
+      "ph": 7.124
+    }
+  ],
+  "global_stats": {
+    "nitrogen": 24.77,
+    "phosphorus": 61.157,
+    "potassium": 61.74,
+    "ph": 7.075
+  },
+  "columns": [
+    "nitrogen",
+    "phosphorus",
+    "potassium",
+    "ph"
+  ]
+}

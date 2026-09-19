@@ -1,0 +1,251 @@
+AGRILENS AI — COMPLETE ANTIGRAVITY DEVELOPMENT SPECIFICATION
+Hackathon Project • AI-Powered Geospatial Smart Agriculture Platform
+1. Project Identity
+Project Name: AgriLens AI
+Tagline: See your land. Predict your yield. Grow smarter.
+Project Type: Hackathon web application combining geospatial data, satellite imagery, weather/climate information, soil information, machine learning, and an AI farm advisor.
+2. Problem Statement
+Build an AI-powered smart agriculture system that leverages geospatial data like satellite imagery, climate patterns, and soil conditions to help farmers make better decisions. The solution should monitor land, predict crop yield, and recommend optimal farming strategies based on location-specific insights, ultimately improving productivity and reducing risks in agriculture.
+3. Core Solution
+AgriLens AI is a location-aware agricultural decision-support platform. A farmer selects or draws the boundary of a farm on an interactive map. The system obtains or simulates location-specific satellite, weather, climate, soil, and historical agricultural information. An analytics/ML pipeline calculates vegetation indicators such as NDVI, assesses crop suitability, predicts yield, identifies risks, and converts the results into practical recommendations.
+Core pipeline:
+Farm Location → Satellite + Weather + Soil + Historical Data → Feature Engineering → ML Models → Risk/Yield/Crop Analysis → AI Farm Advisor → Actionable Recommendations
+4. Hackathon MVP — MUST BUILD
+Landing page explaining the problem and solution.
+Interactive map where the user searches for a location and draws/selects a farm boundary.
+Farm analysis request using the selected coordinates/polygon.
+Weather information for the selected location.
+Satellite/vegetation analysis with NDVI or realistic demo data if live satellite processing is unavailable.
+Soil profile with pH, nitrogen, phosphorus, potassium, moisture, and an overall soil score.
+Crop suitability recommendations with scores and explanations.
+ML-based crop yield prediction with predicted tonnes/hectare and confidence/range.
+Risk analysis covering drought, flood/heavy-rain, crop stress, and disease/pest risk where data permits.
+AI Farm Advisor that turns structured farm data into short, actionable recommendations.
+Dashboard with charts, map, KPIs, recommendations, loading states, error states, and responsive design.
+Clean README and demo-ready seed/mock data so the application works even if an external API is unavailable.
+5. Features
+Farm Selection: Search a place, click/draw a polygon, calculate approximate area, save coordinates.
+Farm Health: Aggregate vegetation, soil, weather, and risk signals into an understandable health score.
+Satellite Analysis: Display satellite/vegetation layer or prepared imagery; calculate/display NDVI trend where supported.
+Weather Intelligence: Temperature, humidity, rainfall, forecast, wind, historical/expected rainfall where available.
+Soil Intelligence: pH, N, P, K, moisture, organic carbon/soil type where available.
+Crop Suitability: Rank suitable crops using ML/rules and show reasons rather than only a score.
+Yield Prediction: Predict yield in tonnes/hectare using crop, climate, soil, vegetation, and historical features.
+Risk Analysis: Estimate drought, flood/heavy rain, crop stress, and disease/pest risk when inputs support it.
+AI Farm Advisor: Generate data-grounded recommendations such as irrigation timing, crop choice, monitoring, and fertilizer considerations.
+Historical Trends: Show NDVI, rainfall, temperature, and yield trends when historical data is available.
+6. User Flow
+Open AgriLens AI.
+Read the value proposition and click Analyze My Farm.
+Search for a location or use the map.
+Draw/select the farm boundary.
+Click Analyze Farm.
+Frontend sends coordinates/polygon to FastAPI.
+Backend retrieves external data or uses a clearly labelled demo-data fallback.
+Backend calculates features such as NDVI and weather/soil indicators.
+ML models produce crop suitability, yield prediction, and risk outputs.
+AI recommendation service converts structured results into actionable advice.
+Dashboard displays the complete farm intelligence report.
+User can inspect Satellite, Weather, Soil, Yield, Risk, and Recommendations sections.
+7. Recommended Tech Stack
+Frontend: React + Vite
+Styling: Tailwind CSS
+Routing: React Router
+Maps: React Leaflet + OpenStreetMap tiles
+Charts: Recharts
+Icons: Lucide React
+Backend: Python + FastAPI
+ML: Scikit-learn + XGBoost
+Data Processing: Pandas + NumPy
+Geospatial processing: GeoPandas/Shapely where required
+Database: PostgreSQL + PostGIS
+Satellite: Sentinel-2 and/or Google Earth Engine when practical
+Weather: suitable weather API
+Soil: suitable soil/geospatial dataset or API
+AI Advisor: Gemini API or another available LLM API
+Authentication: Firebase Auth or JWT; authentication may be omitted from MVP if it delays the core demo
+Deployment: Vercel for frontend and Render/Railway/cloud service for FastAPI
+Version control: Git + GitHub
+8. Architecture
+React Frontend → FastAPI REST API → Data Services (Satellite/Weather/Soil) → Feature Engineering → ML Models (Crop Suitability/Yield/Risk) → AI Recommendation Service → PostgreSQL/PostGIS → React Dashboard
+Use a service-oriented backend. Keep external API calls, ML inference, database operations, and recommendation generation separated.
+9. Frontend Pages
+Landing.jsx: Hero, problem, solution, features, workflow, CTA.
+FarmSelection.jsx: Interactive map, search, polygon drawing, area calculation, Analyze Farm button.
+Dashboard.jsx: Main KPI overview and farm summary.
+FarmAnalysis.jsx: Combined analysis view.
+CropRecommendation.jsx: Crop suitability cards and explanations.
+YieldPrediction.jsx: Predicted yield, confidence/range, historical comparison.
+Reports.jsx: Optional report/export view.
+Login.jsx: Optional authentication page.
+10. Dashboard UI Requirements
+The dashboard should feel like a modern agritech product, not a generic admin panel.
+Header: AgriLens AI logo, selected farm/location, user menu if authentication is enabled.
+Top KPI cards: Farm Health, NDVI, Soil Score, Predicted Yield, Main Risk.
+Large interactive farm map/satellite panel.
+Weather summary card.
+Soil health card.
+NDVI trend chart.
+Yield prediction visualization.
+Risk cards with severity and explanation.
+AI Recommendations panel with priority labels.
+Tabs: Overview | Satellite | Weather | Soil | Yield | Risks | Recommendations.
+Responsive layout for desktop and tablet.
+Use accessible contrast, clear labels, tooltips, and meaningful empty/loading/error states.
+11. Frontend Component Structure
+Navbar.jsx
+Sidebar.jsx
+MapSelector.jsx
+FarmMap.jsx
+FarmCard.jsx
+FarmHealthCard.jsx
+WeatherCard.jsx
+SoilCard.jsx
+CropCard.jsx
+YieldCard.jsx
+RiskCard.jsx
+RecommendationCard.jsx
+StatCard.jsx
+LoadingScreen.jsx
+ErrorState.jsx
+EmptyState.jsx
+12. Charts
+NDVIChart.jsx — NDVI over time.
+YieldChart.jsx — predicted vs historical/benchmark yield.
+WeatherChart.jsx — temperature/rainfall trend.
+RiskChart.jsx — risk levels.
+CropSuitabilityChart.jsx — crop suitability comparison.
+13. Frontend Services
+api.js — Axios/fetch client and common API configuration.
+farmApi.js — farm analysis endpoints.
+weatherApi.js — weather calls if frontend needs direct external access; prefer backend proxy.
+satelliteApi.js — satellite-related backend calls.
+predictionApi.js — ML prediction endpoints.
+recommendationApi.js — AI advisor endpoint.
+Prefer calling third-party APIs from the backend so API keys are not exposed in the browser.
+14. Backend API Endpoints
+GET /api/health — backend health check.
+POST /api/farms/analyze — accepts farm polygon/coordinates and returns complete analysis.
+POST /api/farms/area — calculates farm area.
+GET /api/weather?lat=&lon= — weather data.
+POST /api/satellite/ndvi — NDVI/vegetation analysis.
+POST /api/soil/analyze — soil information.
+POST /api/predict/crops — crop suitability.
+POST /api/predict/yield — yield prediction.
+POST /api/predict/risk — risk prediction.
+POST /api/recommendations — generates structured AI recommendations.
+POST /api/reports — optional report generation.
+15. Example Analyze Request
+{  "farm_name": "Demo Farm",  "crop": "Rice",  "polygon": [    [80.1234, 13.1234],    [80.1250, 13.1234],    [80.1250, 13.1250],    [80.1234, 13.1250]  ]}
+16. Example Analysis Response
+{  "farm": {    "area_hectares": 2.4,    "location": "Selected Location"  },  "health": {    "score": 82,    "ndvi": 0.72,    "soil_score": 78  },  "weather": {    "temperature_c": 29,    "humidity": 72,    "rainfall_mm": 18  },  "soil": {    "ph": 6.7,    "nitrogen": "Medium",    "phosphorus": "High",    "potassium": "Medium",    "moisture": 63  },  "crops": [    {"name": "Rice", "score": 91},    {"name": "Maize", "score": 78},    {"name": "Wheat", "score": 62}  ],  "yield": {    "crop": "Rice",    "predicted_tons_per_hectare": 4.8,    "lower": 4.3,    "upper": 5.2  },  "risks": {    "drought": 60,    "flood": 20,    "crop_stress": 40  },  "recommendations": [    "Delay irrigation if the forecast indicates sufficient rainfall.",    "Inspect the northern part of the farm if vegetation decline continues.",    "Monitor soil moisture before the next irrigation cycle."  ]}
+17. ML Design
+Model A — Crop Suitability
+Input features: soil pH, N/P/K, moisture, temperature, rainfall, humidity, NDVI, crop requirements, location/climate features. Output: suitability score/class for candidate crops.
+Model B — Yield Prediction
+Recommended starting model: XGBoost Regressor. Inputs: crop, farm area, rainfall, temperature, soil values, NDVI, historical yield and other available features. Output: tonnes/hectare.
+Model C — Risk
+Use classification/regression/rule-assisted scoring depending on available labelled data. Do not fabricate model accuracy. If trained data is synthetic or demo data, label the results as prototype/demo estimates.
+Important: build a clean preprocessing pipeline, train/validation split, feature handling, model persistence, and inference functions. Expose inference through FastAPI.
+18. NDVI
+Formula: NDVI = (NIR - Red) / (NIR + Red)
+Use NDVI as a vegetation-health feature. If actual satellite bands are unavailable during the demo, use prepared sample NDVI time-series data and clearly label it as demo data rather than pretending it is live imagery.
+19. AI Farm Advisor
+The LLM must receive structured analysis results and generate concise recommendations. It should not invent measurements. Recommendations should reference the available inputs.
+Example input: soil moisture 63%, rainfall forecast 42 mm, NDVI 0.72, temperature 29°C.
+Example output: 'Rain is expected soon and soil moisture is moderate. Consider postponing irrigation and rechecking moisture after rainfall.'
+Add a visible disclaimer: 'AI recommendations are decision-support estimates and should be validated with local agricultural experts/field observations.'
+20. Folder Structure
+AgriLens-AI/├── frontend/│   ├── public/│   ├── src/│   │   ├── assets/│   │   ├── components/│   │   ├── pages/│   │   ├── charts/│   │   ├── services/│   │   ├── context/│   │   ├── hooks/│   │   ├── utils/│   │   ├── App.jsx│   │   ├── main.jsx│   │   └── index.css│   ├── package.json│   └── vite.config.js├── backend/│   ├── app/│   │   ├── main.py│   │   ├── routes/│   │   │   ├── farm.py│   │   │   ├── satellite.py│   │   │   ├── weather.py│   │   │   ├── soil.py│   │   │   ├── prediction.py│   │   │   └── recommendations.py│   │   ├── services/│   │   │   ├── satellite_service.py│   │   │   ├── weather_service.py│   │   │   ├── soil_service.py│   │   │   └── ai_service.py│   │   ├── models/│   │   │   ├── crop_model.py│   │   │   ├── yield_model.py│   │   │   └── risk_model.py│   │   ├── database/│   │   │   ├── database.py│   │   │   ├── models.py│   │   │   └── schemas.py│   │   └── utils/│   │       ├── ndvi.py│   │       └── feature_engineering.py│   ├── requirements.txt│   └── .env├── ml/│   ├── datasets/│   ├── notebooks/│   ├── training/│   └── saved_models/├── database/│   ├── schema.sql│   └── seed.sql├── docs/│   ├── architecture.md│   ├── api-documentation.md│   └── project-report.md├── .env.example├── .gitignore├── README.md└── docker-compose.yml
+21. Database Tables
+users — optional authentication profile.
+farms — farm ID, user ID, name, polygon, area, location.
+farm_analysis — timestamped health/analysis results.
+weather_records — weather snapshots/forecast data.
+soil_records — soil parameters.
+satellite_records — imagery metadata and vegetation metrics.
+predictions — crop/yield/risk predictions.
+recommendations — AI recommendations and timestamps.
+22. Environment Variables
+FRONTEND:VITE_API_BASE_URL=BACKEND:DATABASE_URL=WEATHER_API_KEY=GEMINI_API_KEY=EARTH_ENGINE_PROJECT=   # only if usedCORS_ORIGINS=Never commit real API keys. Provide .env.example and keep .env in .gitignore.
+23. Demo/Fallback Strategy
+This is critical for the hackathon. The app must remain demoable if satellite/weather/soil APIs fail. Implement a provider interface and a mock/demo provider. When external data is unavailable, return prepared demo data and show a small 'Demo data' indicator. Never silently present simulated values as live measurements.
+24. Visual Design Direction
+Modern agritech dashboard.
+Primary visual language: natural greens with neutral backgrounds and restrained accent colors.
+Avoid excessive gradients, glassmorphism, or gaming aesthetics.
+Use cards with clear hierarchy, subtle borders/shadows, readable typography.
+Use map/satellite imagery as a visual focal point.
+Use green/yellow/red only when communicating health/risk semantics.
+Make the dashboard presentation-ready at 1366px+ desktop width.
+Also ensure responsive behavior for smaller screens.
+25. Security and Reliability
+Do not expose API keys in React.
+Validate all incoming coordinates and polygons.
+Validate numeric ranges for soil/weather features.
+Handle external API timeouts gracefully.
+Add CORS configuration.
+Return structured error responses.
+Never claim live data or model accuracy without evidence.
+Keep model files and datasets outside the frontend.
+26. Development Order for Antigravity
+Initialize monorepo with frontend, backend, ml, database, and docs folders.
+Create React/Vite/Tailwind application and global design system.
+Build landing page.
+Build farm selection map and polygon drawing.
+Create FastAPI server and /api/health.
+Create farm analysis endpoint using mock provider.
+Build dashboard with mock analysis response.
+Add charts and farm map visualization.
+Add weather and soil service interfaces.
+Add satellite/NDVI service interface and demo data.
+Implement ML training/inference modules.
+Connect crop suitability and yield prediction.
+Implement risk analysis.
+Implement AI Farm Advisor.
+Connect all frontend API calls.
+Add loading/error/empty states.
+Add database persistence if time permits.
+Test the complete happy path from map selection to recommendations.
+Prepare README, architecture diagram, demo credentials/data, and final polish.
+27. What NOT to Do
+Do not build dozens of unrelated pages.
+Do not create a generic chatbot as the main feature.
+Do not claim centimeter-level satellite analysis.
+Do not claim model accuracy without a real evaluation.
+Do not present synthetic/demo values as real-time agricultural measurements.
+Do not put secret API keys in frontend code.
+Do not spend most hackathon time on authentication or profile management.
+Do not make the map decorative; it should drive the farm analysis flow.
+28. Antigravity Master Instruction
+You are the lead full-stack engineer for AgriLens AI. Build the application described in this document. Follow the architecture and folder structure unless a technically necessary improvement is required. Prioritize a working end-to-end demo over unnecessary features. Use React + Vite + Tailwind for the frontend and FastAPI + Python for the backend. Keep ML code modular and callable from FastAPI. Keep third-party API credentials on the backend. Start with reliable mock/demo providers so the application runs immediately, then integrate live data providers through service interfaces. The UI must be polished, responsive, accessible, and hackathon-presentation ready. Do not invent live data, model accuracy, or API results. Clearly distinguish demo/simulated data from live data. Every major feature should have loading, error, and empty states. Build incrementally, test each layer, and keep the code readable and modular.
+29. Definition of Done
+User can open the website and understand the product within 10 seconds.
+User can select/draw a farm on the map.
+Clicking Analyze Farm produces a complete analysis.
+Dashboard displays farm health, NDVI, weather, soil, yield, and risks.
+At least one ML model is genuinely integrated into the backend.
+AI recommendations are generated from structured farm data.
+Demo works without requiring every external API to be available.
+No secrets are committed.
+Frontend and backend have clear error handling.
+README explains setup, environment variables, architecture, model training, and demo flow.
+30. Suggested Hackathon Demo Story
+Start by saying: 'Farmers don't farm generic weather forecasts; they farm specific pieces of land. AgriLens AI turns a farm boundary into a location-specific intelligence profile.' Then select a farm, show the satellite/vegetation view, show weather and soil conditions, reveal crop suitability and predicted yield, and finish with the AI Farm Advisor explaining what the farmer should do next.
+31. Suggested Team Responsibilities
+Frontend developer: React dashboard, map, charts, UI/UX.
+Backend developer: FastAPI, APIs, data services, database.
+ML developer: dataset, preprocessing, crop/yield/risk models.
+Integration/presentation developer: AI advisor, deployment, testing, pitch/demo.
+32. Final Deliverable Checklist
+Working GitHub repository.
+Deployed frontend.
+Deployed backend or reliable local demo.
+README with setup instructions.
+.env.example.
+Architecture diagram.
+ML notebook/training script.
+Saved model files or reproducible training instructions.
+Demo dataset/provider.
+Short presentation/demo script.
+Screenshots/video for submission if required.
