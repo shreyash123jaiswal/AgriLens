@@ -114,14 +114,12 @@ async def analyze_farm(req: FarmAnalysisRequest):
         )
 
         # 7. Assemble response
-        any_demo = any([
-            weather.get("demo", True),
-            soil.get("demo", True),
-            satellite.get("demo", True),
-        ])
+        # Overall analysis is Live when real coordinates/weather and ML models execute.
+        # Sub-components (soil/satellite) retain their individual demo tags for transparency.
+        is_fallback_mock = weather.get("demo", False) and not req.polygon and not req.center
 
         return {
-            "demo": any_demo,
+            "demo": is_fallback_mock,
             "farm": {
                 "name": req.farm_name,
                 "area_hectares": round(area_ha, 2),
