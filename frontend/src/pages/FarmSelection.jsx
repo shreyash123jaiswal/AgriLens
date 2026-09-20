@@ -90,6 +90,7 @@ function DrawingMarkers({ points }) {
         fillColor: i === 0 ? '#40916C' : 'white',
         fillOpacity: 1,
         weight: 2,
+        interactive: false,
       }).addTo(map)
       markersRef.current.push(marker)
     })
@@ -315,6 +316,13 @@ export default function FarmSelection() {
       setFarmArea(area)
       setFinishedPolygon(prev)
       setIsDrawing(false)
+      const centerLat = prev.reduce((s, p) => s + p[0], 0) / prev.length
+      const centerLng = prev.reduce((s, p) => s + p[1], 0) / prev.length
+      const center = [centerLat, centerLng]
+      setMapPosition(center)
+      setInputLat(centerLat.toFixed(5))
+      setInputLng(centerLng.toFixed(5))
+      fetchReverseGeocode(centerLat, centerLng)
       return prev
     })
   }, [])
@@ -397,8 +405,7 @@ export default function FarmSelection() {
       `<div style="font-weight: 800; font-size: 0.82rem; color: #1B4332; display: flex; align-items: center; gap: 6px;">
          <span>🏛️</span>
          <span>${stateName}</span>
-       </div>
-       <div style="font-size: 0.68rem; color: #666; margin-top: 2px;">Click to center region</div>`,
+       </div>`,
       {
         sticky: true,
         direction: 'top',
@@ -410,10 +417,10 @@ export default function FarmSelection() {
       mouseover: (e) => {
         const l = e.target
         l.setStyle({
-          weight: 3.0,
+          weight: 2.5,
           color: '#E76F51',
           fillColor: '#52B788',
-          fillOpacity: 0.22,
+          fillOpacity: 0.18,
           dashArray: null,
         })
         if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
@@ -425,17 +432,8 @@ export default function FarmSelection() {
           stateGeoJsonRef.current.resetStyle(e.target)
         }
       },
-      click: (e) => {
-        if (isDrawing) return
-        const bounds = e.target.getBounds()
-        const center = bounds.getCenter()
-        setMapPosition([center.lat, center.lng])
-        setInputLat(center.lat.toFixed(5))
-        setInputLng(center.lng.toFixed(5))
-        setSearchQuery(stateName)
-      },
     })
-  }, [isDrawing])
+  }, [])
 
   if (loading) return <LoadingScreen message={`Analyzing ${farmName}…`} />
 
@@ -838,10 +836,11 @@ export default function FarmSelection() {
                 {/* India State Boundaries GeoJSON Layer */}
                 {showBorders && statesGeoJson && (
                   <GeoJSON
-                    key={`states-${mapStyle}`}
+                    key={`states-${mapStyle}-${isDrawing ? 'drawing' : 'view'}`}
                     ref={stateGeoJsonRef}
                     data={statesGeoJson}
                     style={stateStyle}
+                    interactive={!isDrawing}
                     onEachFeature={onEachStateFeature}
                   />
                 )}
@@ -856,7 +855,7 @@ export default function FarmSelection() {
                   />
                 )}
 
-                {mapPosition && <FlyTo position={mapPosition} />}
+                {mapPosition && !isDrawing && <FlyTo position={mapPosition} />}
 
                 <MapInteractionLayer
                   isDrawing={isDrawing}
@@ -867,7 +866,7 @@ export default function FarmSelection() {
                 />
 
                 {/* Marker at current center */}
-                {mapPosition && (
+                {mapPosition && !isDrawing && (
                   <Marker position={mapPosition}>
                     <Popup>
                       <div style={{ padding: '4px', textAlign: 'center' }}>
@@ -891,6 +890,7 @@ export default function FarmSelection() {
                   <Polygon
                     positions={drawnPoints}
                     pathOptions={{ color: '#E76F51', fillColor: '#F4A261', fillOpacity: 0.25, weight: 2.5, dashArray: '6 4' }}
+                    interactive={false}
                   />
                 )}
 
