@@ -144,36 +144,6 @@ Modern agriculture faces severe data fragmentation, leaving farmers to make crit
 
 ---
 
-## 🏗️ System Architecture
-
-```mermaid
-graph TD
-    A[User / Farmer] -->|Coordinates / Map Drawing| B[React 19 Frontend - Vite]
-    B -->|REST API Requests| C[FastAPI Backend Engine]
-    
-    subgraph Data Services
-        C -->|Hyperlocal Weather & Rain Forecast| D[Open-Meteo API]
-        C -->|Multispectral NDVI Surface Reflectance| E[Sentinel-2 Satellite Engine]
-        C -->|Regional Soil Profiles & NPK Grids| F[Soil Diagnostics Service]
-    end
-
-    subgraph Machine Learning Pipeline
-        C -->|Feature Vector: Soil + Weather + NDVI| G[Crop Recommendation Engine\nRandom Forest - 99.32% Acc]
-        C -->|Environmental & Agronomic Inputs| H[Yield Prediction Engine\nXGBoost Regressor - R²: 0.88]
-        C -->|Multi-Factor Hazard Analytics| I[Agro-Climatic Risk Engine]
-        C -->|ICAR Standard PoP Calibration| J[Field Agronomy Advisory]
-    end
-
-    G --> K[Unified Farm Intelligence Payload]
-    H --> K
-    I --> K
-    J --> K
-    K -->|JSON Response| B
-    B --> L[Executive Agronomic Dashboard]
-```
-
----
-
 ## 🤖 Machine Learning Pipeline & Performance
 
 | Model | Algorithm | Primary Objective | Dataset & Features | Accuracy / Metric |
