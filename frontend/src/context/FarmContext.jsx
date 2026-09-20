@@ -123,7 +123,14 @@ export function FarmProvider({ children }) {
 
   // Load mock data for demo / when backend isn't available
   const loadMockData = (overrides = {}) => {
-    setAnalysisResult({ ...MOCK_ANALYSIS, ...overrides })
+    setAnalysisResult({
+      ...MOCK_ANALYSIS,
+      ...overrides,
+      farm: {
+        ...MOCK_ANALYSIS.farm,
+        ...(overrides.farm || {}),
+      },
+    })
   }
 
   return (

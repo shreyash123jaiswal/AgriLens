@@ -28,6 +28,7 @@ router = APIRouter()
 
 class FarmAnalysisRequest(BaseModel):
     farm_name: str = Field(default="My Farm", max_length=100)
+    location_name: Optional[str] = Field(default=None, max_length=200)
     crop: str = Field(default="Rice", max_length=50)
     polygon: list[list[float]] = Field(default=[])   # [[lng, lat], ...]
     center: Optional[list[float]] = None              # [lat, lon]
@@ -141,16 +142,19 @@ async def analyze_farm(req: FarmAnalysisRequest):
         )
 
         # 7. Assemble response
-        # Overall analysis is Live when real coordinates/weather and ML models execute.
-        # Sub-components (soil/satellite) retain their individual demo tags for transparency.
         is_fallback_mock = weather.get("demo", False) and not req.polygon and not req.center
+
+        place_label = (req.location_name or "").strip()
+        loc_str = f"{place_label} ({lat:.3f}°N, {lon:.3f}°E)" if place_label else f"({lat:.3f}°N, {lon:.3f}°E)"
 
         return {
             "demo": is_fallback_mock,
             "farm": {
                 "name": req.farm_name,
+                "place_name": place_label or "Selected Farm",
+                "location": loc_str,
+                "coordinates": f"{lat:.3f}°N, {lon:.3f}°E",
                 "area_hectares": round(area_ha, 2),
-                "location": f"({lat:.3f}°N, {lon:.3f}°E)",
                 "polygon": req.polygon,
                 "crop": req.crop,
                 "season": season,

@@ -122,6 +122,7 @@ export default function FarmSelection() {
   const stateGeoJsonRef = useRef(null)
 
   const [searchQuery, setSearchQuery] = useState('')
+  const [searchedPlaceName, setSearchedPlaceName] = useState('')
   const [searchResults, setSearchResults] = useState([])
   const [searching, setSearching] = useState(false)
   const [isDrawing, setIsDrawing] = useState(false)
@@ -130,6 +131,25 @@ export default function FarmSelection() {
   const [farmArea, setFarmArea] = useState(null)
   const [farmName, setFarmName] = useState('My Farm')
   const [selectedCrop, setSelectedCrop] = useState('Rice')
+
+  const fetchReverseGeocode = async (lat, lon) => {
+    try {
+      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`)
+      if (res.ok) {
+        const data = await res.json()
+        const city = data.address?.city || data.address?.town || data.address?.village || data.address?.suburb || data.address?.county
+        const state = data.address?.state
+        const parts = [city, state].filter(Boolean)
+        const unique = parts.filter((item, idx) => parts.indexOf(item) === idx)
+        const loc = unique.join(', ')
+        if (loc) {
+          setSearchedPlaceName(loc)
+        }
+      }
+    } catch {
+      // ignore
+    }
+  }
 
   // Load India boundaries GeoJSON
   useEffect(() => {
@@ -173,7 +193,11 @@ export default function FarmSelection() {
     setInputLat(lat.toFixed(5))
     setInputLng(lng.toFixed(5))
     setSearchResults([])
-    setSearchQuery(result.display_name.split(',').slice(0, 2).join(', '))
+    const rawParts = result.display_name.split(',').map(s => s.trim())
+    const uniqueParts = rawParts.filter((item, idx) => rawParts.indexOf(item) === idx)
+    const cleanPlace = uniqueParts.slice(0, 2).join(', ')
+    setSearchQuery(cleanPlace)
+    setSearchedPlaceName(cleanPlace)
   }
 
   const handleApplyCoords = () => {
@@ -196,7 +220,7 @@ export default function FarmSelection() {
     setCoordsError(null)
     const pos = [lat, lng]
     setMapPosition(pos)
-    setSearchQuery(`${lat.toFixed(4)}°, ${lng.toFixed(4)}°`)
+    fetchReverseGeocode(lat, lng)
     setCoordsSuccess(true)
     setTimeout(() => setCoordsSuccess(false), 2500)
   }
@@ -214,7 +238,7 @@ export default function FarmSelection() {
         setInputLng(String(lng))
         setMapPosition([lat, lng])
         setCoordsError(null)
-        setSearchQuery(`Current Location (${lat}°, ${lng}°)`)
+        fetchReverseGeocode(lat, lng)
         setCoordsSuccess(true)
         setTimeout(() => setCoordsSuccess(false), 2500)
       },
@@ -259,7 +283,9 @@ export default function FarmSelection() {
     setFarmArea(calculatePolygonArea(poly))
     setIsDrawing(false)
     setCoordsError(null)
-    setSearchQuery(`${lat.toFixed(4)}°, ${lng.toFixed(4)}°`)
+    if (!searchedPlaceName) {
+      fetchReverseGeocode(lat, lng)
+    }
   }
 
   const handleMapClick = useCallback((latlng) => {
@@ -267,7 +293,7 @@ export default function FarmSelection() {
       setInputLat(latlng[0].toFixed(5))
       setInputLng(latlng[1].toFixed(5))
       setMapPosition(latlng)
-      setSearchQuery(`${latlng[0].toFixed(4)}°, ${latlng[1].toFixed(4)}°`)
+      fetchReverseGeocode(latlng[0], latlng[1])
     }
   }, [locationMode, isDrawing])
 
@@ -311,9 +337,12 @@ export default function FarmSelection() {
         ]
       : mapPosition || [parseFloat(inputLat) || 19.7515, parseFloat(inputLng) || 75.7139]
 
+    const locLabel = searchedPlaceName || (searchQuery && !searchQuery.includes('°') ? searchQuery : '')
+
     const payload = {
       polygon: finishedPolygon || [],
-      farmName,
+      farmName: farmName || 'My Farm',
+      locationName: locLabel,
       crop: selectedCrop,
       center,
     }
@@ -328,9 +357,12 @@ export default function FarmSelection() {
       console.warn('Backend unavailable — loading demo data:', err.message)
       loadMockData({
         farm: {
-          name: farmName,
+          name: farmName || 'My Farm',
+          place_name: locLabel || 'Selected Farm',
           area_hectares: farmArea || 2.4,
-          location: searchQuery || `${center[0].toFixed(4)}°, ${center[1].toFixed(4)}°`,
+          location: locLabel
+            ? `${locLabel} (${center[0].toFixed(3)}°N, ${center[1].toFixed(3)}°E)`
+            : `(${center[0].toFixed(3)}°N, ${center[1].toFixed(3)}°E)`,
           crop: selectedCrop,
         },
       })
