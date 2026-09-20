@@ -93,7 +93,7 @@ Modern agriculture faces severe data fragmentation, leaving farmers to make crit
 
 <p align="center">
   <img src="./screenshots/Landing Page.png" width="45%">
-  <img src="./screenshots/flow.png" width="45%">
+  <img src="./flow.png" width="45%">
 </p>
 
 <p align="center">
@@ -113,7 +113,7 @@ Modern agriculture faces severe data fragmentation, leaving farmers to make crit
 
 <p align="center">
   <img src="./screenshots/Risk Matrix.png" width="45%">
-  <img src="./screenshots/advisory" width="45%">
+  <img src="./a.png" width="45%">
 </p>
 
 ## 🎥 Demo Video
