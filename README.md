@@ -2,12 +2,23 @@
 
 [![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=flat&logo=python&logoColor=white)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688?style=flat&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+![XGBoost](https://img.shields.io/badge/XGBoost-Regression%20%26%20Classification-FF6600?style=flat)
 [![React](https://img.shields.io/badge/React-19-61DAFB?style=flat&logo=react&logoColor=black)](https://react.dev/)
 [![Vite](https://img.shields.io/badge/Vite-8-646CFF?style=flat&logo=vite&logoColor=white)](https://vitejs.dev/)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3+-06B6D4?style=flat&logo=tailwindcss&logoColor=white)
 [![Leaflet](https://img.shields.io/badge/Leaflet-1.9-199900?style=flat&logo=leaflet&logoColor=white)](https://leafletjs.com/)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 **AgriLens** is an end-to-end precision agriculture and geospatial farm intelligence platform. By combining satellite remote sensing (Sentinel-2), real-time agrometeorological telemetry, soil diagnostic profiling, and trained machine learning models, AgriLens empowers farmers, agronomists, and agricultural enterprises with field-specific intelligence, yield forecasting, economic revenue estimation, and certified agronomic action plans.
+
+---
+## 🎥 Demo Video
+
+<!-- Embed or link your uploaded demo video below -->
+
+[![Watch AgriLens Demo Video](https://img.shields.io/badge/▶️_Watch_Demo_Video-AgriLens_Walkthrough-E07B39?style=for-the-badge&logo=youtube&logoColor=white)](YOUR_DEMO_VIDEO_URL_HERE)
+
+> 📹 **Video Demo**: [Click here to watch the full walkthrough on YouTube / Drive](https://drive.google.com/file/d/161TLL6JIOITBc5A9khBUoXr04-582s80/view?usp=sharing)  
 
 ---
 
@@ -108,7 +119,7 @@ Modern agriculture faces severe data fragmentation, leaving farmers to make crit
 
 <p align="center">
   <img src="./screenshots/Yeild.png" width="45%">
-  <img src="./screenshots/soil.png" width="45%">
+  <img src="./screenshots/soil.png" width="46%">
 </p>
 
 <p align="center">
@@ -116,16 +127,6 @@ Modern agriculture faces severe data fragmentation, leaving farmers to make crit
   <img src="./a.png" width="45%">
 </p>
 
-## 🎥 Demo Video
-
-<!-- Embed or link your uploaded demo video below -->
-
-[![Watch AgriLens Demo Video](https://img.shields.io/badge/▶️_Watch_Demo_Video-AgriLens_Walkthrough-E07B39?style=for-the-badge&logo=youtube&logoColor=white)](YOUR_DEMO_VIDEO_URL_HERE)
-
-> 📹 **Video Demo**: [Click here to watch the full walkthrough on YouTube / Drive](YOUR_DEMO_VIDEO_URL_HERE)  
-> *(Replace `YOUR_DEMO_VIDEO_URL_HERE` with your actual video link)*
-
----
 
 ## 🤖 Machine Learning Pipeline & Performance
 
