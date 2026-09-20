@@ -91,47 +91,30 @@ Modern agriculture faces severe data fragmentation, leaving farmers to make crit
 
 <!-- Place your application screenshots in the spaces below -->
 
-### 1. Landing Page & Hero
-![AgriLens Landing Page](docs/screenshots/landing_page.png)
-*Modern agricultural design with alternating rich earthy brown feature section.*
+<p align="center">
+  <img src="./screenshots/Landing Page.png" width="45%">
+  <img src="./screenshots/flow.png" width="45%">
+</p>
 
----
+<p align="center">
+  <img src="./screenshots/Select City.png" width="45%">
+  <img src="./screenshots/Draw Area.png" width="45%">
+</p>
 
-### 2. Interactive Farm Selection & GIS Mapping
-![Farm Selection & Boundary Tool](docs/screenshots/farm_selection.png)
-*Direct latitude/longitude entry, place search, border illumination, and custom boundary drawing.*
+<p align="center">
+  <img src="./screenshots/Home.png" width="45%">
+  <img src="./screenshots/home 2.png" width="45%">
+</p>
 
----
+<p align="center">
+  <img src="./screenshots/Yeild.png" width="45%">
+  <img src="./screenshots/soil.png" width="45%">
+</p>
 
-### 3. Field Overview & Key Agricultural Metrics
-![Field Overview Dashboard](docs/screenshots/dashboard_overview.png)
-*Executive field condition banner, target crop telemetry, and agronomic KPI cards.*
-
----
-
-### 4. Sentinel-2 Satellite NDVI & Canopy Phenology
-![Satellite NDVI Analysis](docs/screenshots/satellite_ndvi.png)
-*Multispectral vegetation index trend, foliar cover metrics, and NDVI spectrum scale indicator.*
-
----
-
-### 5. ICAR Soil Health Card & Agrometeorology
-![Soil Health & Weather](docs/screenshots/soil_and_weather.png)
-*Comprehensive soil diagnostic card with NPK ratings, pH scale, and field operation readiness windows.*
-
----
-
-### 6. Yield Prediction & Commercial Revenue Forecast
-![Yield & Economic Valuation](docs/screenshots/yield_economics.png)
-*Expected yield rate, total plot tonnage, confidence intervals, and MSP-based revenue calculation.*
-
----
-
-### 7. Field Agronomy Advisory & Risk Matrix
-![Agronomy Advisory & Risk](docs/screenshots/advisory_and_risks.png)
-*Actionable field operations plan and multi-factor agro-climatic vulnerability matrix.*
-
----
+<p align="center">
+  <img src="./screenshots/Risk Matrix.png" width="45%">
+  <img src="./screenshots/advisory" width="45%">
+</p>
 
 ## 🎥 Demo Video
 
